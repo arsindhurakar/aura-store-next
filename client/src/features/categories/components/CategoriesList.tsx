@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { useCategories } from "../hooks/useCategory";
 
-export default function CategoriesList() {
+export function CategoriesList() {
   const { data: categories } = useCategories();
 
   return (

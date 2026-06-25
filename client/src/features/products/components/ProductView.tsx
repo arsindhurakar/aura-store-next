@@ -19,7 +19,7 @@ interface ProductViewProps {
   related?: Product[];
 }
 
-export default function ProductView({
+export function ProductView({
   product,
   related = [],
 }: ProductViewProps) {

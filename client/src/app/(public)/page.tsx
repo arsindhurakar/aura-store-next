@@ -13,7 +13,7 @@ import { useCategories } from "@/features/categories/hooks/useCategory";
 import { Category } from "@/features/categories/types";
 import { Product } from "@/features/products/types";
 
-export default function Page() {
+export default function PublicPage() {
   const { data: featured, isLoading } = useFeatured();
   const { data: categories } = useCategories();
 

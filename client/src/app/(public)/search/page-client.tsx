@@ -10,7 +10,7 @@ import { ProductGridSkeleton } from "@/features/products/components/ProductGridS
 import { ProductCard } from "@/features/products/components/ProductCard";
 import { useProducts } from "@/features/products/hooks/useProducts";
 
-const SUGGESTIONS = [
+const SUGGESTIONS = [ 
   "Aether Pro",
   "Headphones",
   "Smartwatch",
@@ -18,7 +18,7 @@ const SUGGESTIONS = [
   "Leather case",
 ];
 
-export default function SearchPage() {
+export default function SearchPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
 

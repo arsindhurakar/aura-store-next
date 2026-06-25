@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Check, ArrowRight, Package } from "lucide-react";
+import { Metadata } from "next";
 
 type SuccessPageProps = {
   searchParams: Promise<{
@@ -8,7 +9,12 @@ type SuccessPageProps = {
   }>;
 };
 
-export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+export const metadata: Metadata = {
+  title: "Order Confirmed - NOIR",
+  description: "We’ve received your order and will begin processing it shortly.",
+};
+
+export default async function OrderSuccessPage({ searchParams }: SuccessPageProps) {
   const { ref } = await searchParams;
 
   return (

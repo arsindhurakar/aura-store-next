@@ -1,13 +1,13 @@
 import { Suspense } from "react";
-import SearchPageClient from "./SearchPageClient";
+import SearchPageClient from "./page-client";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Search - NOIR",
-  description: "Search premium phones, audio, wearables and accessories.",
+  description: "Find premium phones, audio, wearables, and accessories.",
 };
 
-export default function Page() {
+export default function SearchPage() {
 
   return (
     <Suspense fallback={null}>

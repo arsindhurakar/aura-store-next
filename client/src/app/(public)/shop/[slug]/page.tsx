@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { productService } from "@/features/products/services/product.service";
-import ProductView from "./ProductView";
+import { ProductView } from "@/features/products/components/ProductView";
 
 interface PageProps {
   params: Promise<{

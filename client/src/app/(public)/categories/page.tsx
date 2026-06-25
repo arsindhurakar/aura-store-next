@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 
 import { Container } from "@/components/layout/Container";
-import CategoriesList from "@/features/categories/components/CategoriesList";
+import { CategoriesList } from "@/features/categories/components/CategoriesList";
 
 export const metadata: Metadata = {
   title: "Categories - NOIR",
-  description: "Browse premium phones, audio, wearables and accessories.",
+  description: "Explore premium categories: phones, audio, wearables, and accessories.",
 };
 
 export default function CategoriesPage() {

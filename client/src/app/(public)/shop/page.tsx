@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Shop - NOIR",
-  description: "Shop premium phones, audio, wearables and accessories.",
+  description: "Discover premium phones, audio, wearables, and accessories.",
 };
 
 export default function ShopPage() {
