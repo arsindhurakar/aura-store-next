@@ -4,7 +4,7 @@ import { Container } from "@/components/layout/Container";
 import CategoriesList from "@/features/categories/components/CategoriesList";
 
 export const metadata: Metadata = {
-  title: "Categories — NOIR",
+  title: "Categories - NOIR",
   description: "Browse premium phones, audio, wearables and accessories.",
 };
 

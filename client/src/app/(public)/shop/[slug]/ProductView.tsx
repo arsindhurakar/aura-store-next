@@ -12,6 +12,7 @@ import { Product } from "@/features/products/types";
 import { useCart } from "@/store/cart.store";
 import { STATUS_LABEL, formatPrice } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ProductViewProps {
   product: Product;
@@ -192,7 +193,7 @@ export default function ProductView({
               <button
                 type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="flex h-12 w-12 items-center justify-center text-muted-foreground hover:text-foreground"
+                className="flex h-12 w-12 items-center justify-center text-muted-foreground cursor-pointer hover:text-foreground"
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -202,13 +203,13 @@ export default function ProductView({
               <button
                 type="button"
                 onClick={() => setQty((q) => q + 1)}
-                className="flex h-12 w-12 items-center justify-center text-muted-foreground hover:text-foreground"
+                className="flex h-12 w-12 items-center justify-center text-muted-foreground cursor-pointer hover:text-foreground"
               >
                 <Plus className="h-4 w-4" />
               </button>
             </div>
 
-            <button
+            <Button
               type="button"
               disabled={product.stockStatus === "out_of_stock"}
               onClick={() => {
@@ -220,15 +221,15 @@ export default function ProductView({
 
                 toast.success("Added to cart", {
                   description: color
-                    ? `${product.name} — ${color}`
+                    ? `${product.name} - ${color}`
                     : product.name,
                 });
               }}
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-40 sm:flex-none sm:min-w-55"
+              size="lg"
             >
               <ShoppingBag className="h-4 w-4" />
-              Add to cart — {formatPrice(price * qty)}
-            </button>
+              Add to cart - {formatPrice(price * qty)}
+            </Button>
           </div>
 
           {/* Benefits */}

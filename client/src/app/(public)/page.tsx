@@ -62,7 +62,7 @@ export default function Page() {
 
             <Image
               src={heroPhone}
-              alt="Aether Pro 15 — flagship smartphone"
+              alt="Aether Pro 15 - flagship smartphone"
               priority
               height={520}
               width={520}

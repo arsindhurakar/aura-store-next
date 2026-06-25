@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Section } from "@/components/common/Section";
 import { Field } from "@/components/common/Field";
 import { Toggle } from "@/components/common/Toggle";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   return (
@@ -49,12 +50,11 @@ export default function SettingsPage() {
       </Section>
 
       <div>
-        <button
+        <Button
           onClick={() => toast.success("Settings saved (mock)")}
-          className="inline-flex h-11 items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:opacity-90"
         >
           Save changes
-        </button>
+        </Button>
       </div>
     </div>
   );

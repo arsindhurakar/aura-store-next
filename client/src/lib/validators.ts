@@ -16,12 +16,26 @@ export const loginSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const productFormSchema = z.object({
-  name: z.string().min(2),
-  brand: z.string().min(1),
-  category: z.enum(["phones", "audio", "wearables", "accessories"]),
-  price: z.coerce.number().positive(),
-  salePrice: z.coerce.number().positive().optional().or(z.literal(0)),
-  stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"]),
-  description: z.string().min(10),
+  name: z.string().min(2, "Please enter the product name"),
+  brand: z.string().min(2, "Please enter the brand name"),
+  category: z.enum(["phones", "audio", "wearables", "accessories"], {
+    errorMap: () => ({ message: "Please select a category" }),
+  }),
+  price: z.coerce
+    .number({
+      invalid_type_error: "Price must be a number",
+    })
+    .positive("Price must be greater than 0"),
+  salePrice: z.coerce
+    .number({
+      invalid_type_error: "Sale price must be a number",
+    })
+    .nonnegative("Sale price cannot be negative")
+    .optional()
+    .or(z.literal(0)),
+  stockStatus: z.enum(["in_stock", "low_stock", "out_of_stock"], {
+    errorMap: () => ({ message: "Please select stock status" }),
+  }),
+  description: z.string().min(10, "Please enter a more detailed description"),
 });
 export type ProductFormInput = z.infer<typeof productFormSchema>;

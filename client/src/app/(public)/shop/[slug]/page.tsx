@@ -24,7 +24,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${product.name} — NOIR`,
+    title: `${product.name} - NOIR`,
     description: product.tagline ?? product.description,
   };
 }

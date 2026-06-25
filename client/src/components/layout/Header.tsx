@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { ShoppingBag, Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-// import { useCart } from "@/store/cart.store";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/store/cart.store";
 
 const nav = [
   { to: "/shop", label: "Shop" },
@@ -16,7 +16,7 @@ const nav = [
 ];
 
 export function Header() {
-  // const count = useCart((s) => s.lines.reduce((a, l) => a + l.quantity, 0));
+  const count = useCart((s) => s.lines.reduce((a, l) => a + l.quantity, 0));
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const isAdmin = pathname.startsWith("/admin");
@@ -63,11 +63,11 @@ export function Header() {
           >
             <ShoppingBag className="h-4 w-4" />
             <span>Cart</span>
-            {/* {count > 0 && (
+            {count > 0 && (
               <span className="ml-1 rounded-full bg-background px-1.5 text-xs font-semibold text-foreground">
                 {count}
               </span>
-            )} */}
+            )}
           </Link>
           <button
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border md:hidden"

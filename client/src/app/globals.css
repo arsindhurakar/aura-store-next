@@ -80,7 +80,7 @@
     linear-gradient(180deg, var(--surface-elevated), var(--surface));
 }
 
-/* Light theme — porcelain & graphite */
+/* Light theme - porcelain & graphite */
 :root {
   --radius: 0.75rem;
   --background: oklch(0.985 0.002 264);
@@ -124,7 +124,7 @@
   --sidebar-ring: oklch(0.72 0.17 200);
 }
 
-/* Dark theme — deep graphite, electric cyan accent */
+/* Dark theme - deep graphite, electric cyan accent */
 .dark {
   --background: oklch(0.13 0.008 264);
   --foreground: oklch(0.96 0.003 264);

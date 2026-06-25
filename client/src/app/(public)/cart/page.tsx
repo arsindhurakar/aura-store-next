@@ -96,7 +96,7 @@ export default function CartPage() {
                       onClick={() =>
                         updateQty(line.productId, line.quantity - 1)
                       }
-                      className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center text-muted-foreground cursor-pointer hover:text-foreground"
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
@@ -109,7 +109,7 @@ export default function CartPage() {
                       onClick={() =>
                         updateQty(line.productId, line.quantity + 1)
                       }
-                      className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center text-muted-foreground cursor-pointer hover:text-foreground"
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
@@ -123,7 +123,7 @@ export default function CartPage() {
 
                   <button
                     onClick={() => remove(line.productId)}
-                    className="text-muted-foreground hover:text-destructive"
+                    className="text-muted-foreground cursor-pointer hover:text-destructive"
                     aria-label="Remove"
                   >
                     <Trash2 className="h-4 w-4" />

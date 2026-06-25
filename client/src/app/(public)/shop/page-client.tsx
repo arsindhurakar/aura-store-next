@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { ProductQuery } from "@/types/api.types";
 import { ProductSort } from "@/types";
 import { useBrands } from "@/features/brands/hooks/useBrand";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const DEFAULT_SORT: ProductSort = "newest";
 
@@ -67,9 +68,7 @@ export default function ShopPageClient() {
   };
 
   const { data: products, isLoading } = useProducts(search);
-
   const { data: categories } = useCategories();
-
   const { data: brands } = useBrands();
 
   return (
@@ -109,7 +108,7 @@ export default function ShopPageClient() {
                     })
                   }
                   className={cn(
-                    "block w-full text-left text-sm transition",
+                    "block text-left text-sm transition cursor-pointer",
                     !search.category
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -128,7 +127,7 @@ export default function ShopPageClient() {
                       })
                     }
                     className={cn(
-                      "block w-full text-left text-sm transition",
+                      "block text-left text-sm transition cursor-pointer",
                       search.category === c.id
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground",
@@ -155,7 +154,7 @@ export default function ShopPageClient() {
                     })
                   }
                   className={cn(
-                    "block w-full text-left text-sm transition",
+                    "block text-left text-sm transition cursor-pointer",
                     !search.brand
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -174,7 +173,7 @@ export default function ShopPageClient() {
                       })
                     }
                     className={cn(
-                      "block w-full text-left text-sm transition",
+                      "block text-left text-sm transition cursor-pointer",
                       search.brand === brand
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground",
@@ -197,26 +196,31 @@ export default function ShopPageClient() {
             </div>
 
             <div className="flex items-center gap-3">
-              <select
+              <Select
                 value={search.sort}
-                onChange={(e) =>
+                onValueChange={(value) =>
                   update({
-                    sort: e.target.value as ProductSort,
+                    sort: value as ProductSort,
                   })
                 }
-                className="h-9 rounded-full border border-border bg-transparent px-3 text-sm"
               >
-                <option value="newest">Newest</option>
-                <option value="featured">Featured</option>
-                <option value="price_asc">Price low-high</option>
-                <option value="price_desc">Price high-low</option>
-              </select>
+                <SelectTrigger className="h-9 rounded-full border border-border bg-transparent px-3 text-sm">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="featured">Featured</SelectItem>
+                  <SelectItem value="price_asc">Price low-high</SelectItem>
+                  <SelectItem value="price_desc">Price high-low</SelectItem>
+                </SelectContent>
+              </Select>
 
               <div className="flex h-9 items-center rounded-full border border-border p-0.5">
                 <button
                   onClick={() => setView("grid")}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full",
+                    "flex h-8 w-8 items-center justify-center rounded-full cursor-pointer",
                     view === "grid" && "bg-foreground text-background",
                   )}
                 >
@@ -226,7 +230,7 @@ export default function ShopPageClient() {
                 <button
                   onClick={() => setView("list")}
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full",
+                    "flex h-8 w-8 items-center justify-center rounded-full cursor-pointer",
                     view === "list" && "bg-foreground text-background",
                   )}
                 >

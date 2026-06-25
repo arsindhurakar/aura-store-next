@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
@@ -16,11 +15,11 @@ import {
   SHIPPING_FEE,
 } from "@/lib/constants";
 import { EmptyState } from "@/components/common/EmptyState";
-
 import { ShoppingBag, Lock } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { orderService } from "@/features/orders/services/order.service";
+import { Button } from "@/components/ui/button";
 
 export default function CheckoutPage() {
   const lines = useCart((s) => s.lines);
@@ -231,15 +230,16 @@ export default function CheckoutPage() {
               </div>
             </dl>
 
-            <button
+            <Button
               type="submit"
               disabled={placeOrder.isPending}
-              className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+              className="mt-6 w-full"
+              size="lg"
             >
               {placeOrder.isPending
                 ? "Placing order..."
-                : `Place order — ${formatPrice(total)}`}
-            </button>
+                : `Place order - ${formatPrice(total)}`}
+            </Button>
           </div>
         </aside>
       </form>

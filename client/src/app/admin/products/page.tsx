@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useProducts } from "@/features/products/hooks/useProducts";
 import { ProductFormDialog } from "@/features/products/components/ProductFormDialog";
+import { Button } from "@/components/ui/button";
 
 export default function ProductsPage() {
   const { data: products } = useProducts();
@@ -40,13 +41,12 @@ export default function ProductsPage() {
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <button
+            <Button
               onClick={() => setEditing(null)}
-              className="inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background transition hover:opacity-90"
             >
               <Plus className="h-4 w-4" />
               New product
-            </button>
+            </Button>
           </DialogTrigger>
 
           <ProductFormDialog editing={editing} onDone={() => setOpen(false)} />
@@ -130,7 +130,7 @@ export default function ProductsPage() {
                             setEditing(product.id);
                             setOpen(true);
                           }}
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition cursor-pointer hover:bg-muted hover:text-foreground"
                           aria-label="Edit product"
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -149,7 +149,7 @@ export default function ProductsPage() {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition cursor-pointer hover:bg-destructive/10 hover:text-destructive"
                           aria-label="Delete product"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

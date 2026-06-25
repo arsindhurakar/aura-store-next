@@ -10,6 +10,10 @@ import { toast } from "sonner";
 
 import { loginSchema, type LoginInput } from "@/lib/validators";
 import { authService } from "@/features/auth/services/auth.service";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FieldLabel } from "@/components/common/FieldLabel";
+import { FieldError } from "@/components/common/FieldError";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -27,6 +31,7 @@ export default function AdminLoginPage() {
       authService.login(email, password),
 
     onSuccess: () => {
+      toast.success("Welcome back");
       router.push("/admin/dashboard");
     },
 
@@ -35,8 +40,13 @@ export default function AdminLoginPage() {
     },
   });
 
+  const onSubmit = (data: LoginInput) => {
+    login.mutate(data);
+  };
+
   return (
     <div className="grid min-h-screen md:grid-cols-2">
+      {/* LEFT SIDE */}
       <div className="relative hidden flex-col justify-between overflow-hidden bg-sidebar p-12 md:flex">
         <Link href="/" className="font-display text-2xl">
           NOIR <span className="ml-1 text-eyebrow">/ admin</span>
@@ -55,17 +65,19 @@ export default function AdminLoginPage() {
           </h2>
 
           <p className="mt-4 max-w-sm text-muted-foreground">
-            Inventory, orders, settings — managed from one quiet, premium
-            console.
+            Inventory, orders, settings — managed from one quiet, premium console.
           </p>
         </div>
 
-        <div className="text-xs text-muted-foreground">© NOIR Devices</div>
+        <div className="text-xs text-muted-foreground">
+          © NOIR Devices
+        </div>
       </div>
 
+      {/* RIGHT SIDE */}
       <div className="flex items-center justify-center p-8 sm:p-12">
         <form
-          onSubmit={form.handleSubmit((data) => login.mutate(data))}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="w-full max-w-sm"
         >
           <div className="text-eyebrow">Sign in</div>
@@ -78,60 +90,58 @@ export default function AdminLoginPage() {
             Any credentials work in this demo.
           </p>
 
+          {/* FIELDS */}
           <div className="mt-10 space-y-5">
-            <label className="block">
-              <div className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">
-                Email
-              </div>
+            {/* EMAIL */}
+            <div>
+              <FieldLabel>Email</FieldLabel>
 
-              <input
+              <Input
                 {...form.register("email")}
-                className={input}
                 placeholder="admin@noir.com"
+                className={fieldClass}
               />
 
-              {form.formState.errors.email && (
-                <div className="mt-1.5 text-xs text-destructive">
-                  {form.formState.errors.email.message}
-                </div>
-              )}
-            </label>
+              <FieldError
+                error={form.formState.errors.email?.message}
+              />
+            </div>
 
-            <label className="block">
-              <div className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">
-                Password
-              </div>
+            {/* PASSWORD */}
+            <div>
+              <FieldLabel>Password</FieldLabel>
 
-              <input
+              <Input
                 type="password"
                 {...form.register("password")}
-                className={input}
                 placeholder="••••••••"
+                className={fieldClass}
               />
 
-              {form.formState.errors.password && (
-                <div className="mt-1.5 text-xs text-destructive">
-                  {form.formState.errors.password.message}
-                </div>
-              )}
-            </label>
+              <FieldError
+                error={form.formState.errors.password?.message}
+              />
+            </div>
           </div>
 
-          <button
+          {/* SUBMIT */}
+          <Button
             type="submit"
             disabled={login.isPending}
-            className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+            size="lg"
+            className="mt-8 w-full"
           >
             {login.isPending ? (
-              "Signing in…"
+              "Signing in..."
             ) : (
               <>
                 Sign in
                 <ArrowRight className="h-4 w-4" />
               </>
             )}
-          </button>
+          </Button>
 
+          {/* FOOTER NOTE */}
           <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <Lock className="h-3 w-3" />
             Encrypted demo session
@@ -142,5 +152,5 @@ export default function AdminLoginPage() {
   );
 }
 
-const input =
-  "w-full rounded-xl border border-border bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-border-strong focus:outline-none focus:ring-2 focus:ring-accent/30";
+const fieldClass =
+  "mt-2 h-12";

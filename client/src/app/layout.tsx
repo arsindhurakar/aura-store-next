@@ -23,7 +23,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "NOIR — Premium mobile devices & accessories ",
+  title: "NOIR - Premium mobile devices & accessories ",
   description: "Storefront",
 };
 
