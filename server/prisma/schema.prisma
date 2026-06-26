@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  slug        String          @unique
+  price       Decimal         @db.Decimal(10, 2)
+  salePrice   Decimal?        @db.Decimal(10, 2)
+  description String
+  tagline     String?
+  category    ProductCategory
+  brand       String
+  stockStatus StockStatus     @default(in_stock)
+  images      String[]
+  featured    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([category])
+  @@index([brand])
+  @@index([featured])
+}
+
+enum ProductCategory {
+  phones
+  audio
+  wearables
+  accessories
+}
+
+enum StockStatus {
+  in_stock
+  low_stock
+  out_of_stock
+}
