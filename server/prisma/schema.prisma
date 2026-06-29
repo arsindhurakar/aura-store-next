@@ -27,6 +27,17 @@ model Product {
   @@index([featured])
 }
 
+model User {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  role      Role     
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum ProductCategory {
   phones
   audio
@@ -38,4 +49,8 @@ enum StockStatus {
   in_stock
   low_stock
   out_of_stock
+}
+
+enum Role {
+  admin
 }

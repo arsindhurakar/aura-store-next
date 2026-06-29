@@ -1,7 +1,7 @@
-import { ProductDto } from "@/dtos/product.dto.js";
+import { ProductResponseDto } from "@/dtos/product.dto.js";
 import { Product } from "@prisma/client";
 
-export function toProductDto(product: Product): ProductDto {
+export function toProductResponseDto(product: Product): ProductResponseDto {
   return {
     id: product.id,
     name: product.name,

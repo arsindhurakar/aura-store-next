@@ -1,6 +1,6 @@
 import { type Category, type StockStatus } from "@/types/product.types.js";
 
-export interface ProductDto {
+export type ProductResponseDto = {
   id: string;
   name: string;
   slug: string;
@@ -15,4 +15,4 @@ export interface ProductDto {
   featured: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};

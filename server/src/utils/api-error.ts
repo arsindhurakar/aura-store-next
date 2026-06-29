@@ -52,4 +52,14 @@ export class ApiError extends Error {
   }) {
     return new ApiError(409, message, code);
   }
+
+  static unauthorized({
+    message,
+    code = "UNAUTHORIZED",
+  }: {
+    message: string;
+    code?: string;
+  }) {
+    return new ApiError(401, message, code);
+  }
 }

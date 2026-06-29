@@ -7,7 +7,7 @@ import {
   getProducts,
   updateProduct,
 } from "@/controllers/product.controller.js";
-import { validate } from "@/middleware/validator.js";
+import { validate } from "@/middlewares/validator.js";
 import {
   createProductSchema,
   updateProductSchema,
