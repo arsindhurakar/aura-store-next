@@ -6,6 +6,7 @@ export interface ApiSuccessResponse<T> {
 export interface ApiErrorBody {
   message: string;
   code?: string;
+  details?: unknown;
 }
 
 export interface ApiErrorResponse {
