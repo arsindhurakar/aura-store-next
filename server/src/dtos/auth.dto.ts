@@ -1,4 +1,4 @@
-import { type UserRole } from "@/types/auth.types.js";
+import type { UserRole } from "@/types/auth.types.js";
 
 export type UserResponseDto = {
   id: string;

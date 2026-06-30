@@ -1,4 +1,4 @@
-import { type Category, type StockStatus } from "@/types/product.types.js";
+import type { Category, StockStatus } from "@/types/product.types.js";
 
 export type ProductResponseDto = {
   id: string;

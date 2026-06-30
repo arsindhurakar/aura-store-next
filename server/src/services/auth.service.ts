@@ -44,6 +44,10 @@ export class AuthService implements IAuthService {
 
     return { user: toUserResponseDto(user), token };
   }
+
+  async logout(): Promise<null> {
+    return null;
+  }
 }
 
 const authRepository = new AuthRepository();

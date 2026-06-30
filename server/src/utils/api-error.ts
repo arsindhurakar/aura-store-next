@@ -62,4 +62,14 @@ export class ApiError extends Error {
   }) {
     return new ApiError(401, message, code);
   }
+
+  static forbidden({
+    message,
+    code = "FORBIDDEN",
+  }: {
+    message: string;
+    code?: string;
+  }) {
+    return new ApiError(403, message, code);
+  }
 }
