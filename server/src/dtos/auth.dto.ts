@@ -1,4 +1,4 @@
-import type { UserRole } from "@/types/auth.types.js";
+import type { AuthTokens, UserRole } from "@/types/auth.types.js";
 
 export type UserResponseDto = {
   id: string;
@@ -12,5 +12,15 @@ export type UserResponseDto = {
 
 export type AuthResponseDto = {
   user: UserResponseDto;
-  token: string;
+  tokens: AuthTokens;
+};
+
+export type RefreshSessionResponseDto = {
+  id: string;
+  userId: string;
+  expiresAt: string;
+  createdAt: string;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  deviceName?: string | null;
 };

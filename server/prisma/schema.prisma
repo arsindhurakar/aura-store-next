@@ -33,9 +33,30 @@ model User {
   lastName  String
   email     String   @unique
   password  String
-  role      Role     
+  role      Role
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  refreshSessions RefreshSession[]
+}
+
+model RefreshSession {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String
+  ipAddress  String?
+  userAgent  String?
+  deviceName String?
+  expiresAt  DateTime
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 enum ProductCategory {

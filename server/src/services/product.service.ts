@@ -57,4 +57,5 @@ export class ProductService implements IProductService {
 }
 
 const productRepository = new ProductRepository();
+
 export const productService = new ProductService(productRepository);

@@ -12,7 +12,7 @@ export const registerSchema = z.object({
   role: z.enum(["admin"]).default("admin"),
 });
 
-export type registerInput = z.infer<typeof registerSchema>;
+export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
   email: z
@@ -24,4 +24,8 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export type loginInput = z.infer<typeof loginSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export const refreshSessionSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required"),
+});
