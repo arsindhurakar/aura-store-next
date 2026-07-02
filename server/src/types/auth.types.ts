@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 export type UserRole = "admin";
 
 export type TokenType = "access" | "refresh";
@@ -32,3 +34,9 @@ export type RequestMeta = {
   userAgent?: string;
   deviceName?: string;
 };
+
+export type RefreshSessionWithUser = Prisma.RefreshSessionGetPayload<{
+  include: {
+    user: true;
+  };
+}>;

@@ -1,13 +1,17 @@
 import prisma from "@/lib/prisma.js";
-import { RefreshSessionResponseDto, UserResponseDto } from "@/dtos/auth.dto.js";
+import { UserResponseDto } from "@/dtos/auth.dto.js";
 import {
   IRefreshSessionRepository,
   IUserRepository,
 } from "@/interfaces/auth/auth.repository.interface.js";
 import { toUserResponseDto } from "@/mappers/user.mapper.js";
 import { RegisterInput } from "@/schemas/auth.schema.js";
-import { User } from "@prisma/client";
-import { RefreshSessionInput, RequestMeta } from "@/types/auth.types.js";
+import { RefreshSession, User } from "@prisma/client";
+import {
+  RefreshSessionInput,
+  RefreshSessionWithUser,
+  RequestMeta,
+} from "@/types/auth.types.js";
 
 export class AuthRepository implements IUserRepository {
   async create(data: RegisterInput): Promise<UserResponseDto> {
@@ -26,17 +30,39 @@ export class AuthRepository implements IUserRepository {
 export class RefreshSessionRepository implements IRefreshSessionRepository {
   async create(
     data: RefreshSessionInput & RequestMeta,
-  ): Promise<RefreshSessionResponseDto> {
+  ): Promise<RefreshSession> {
     const refreshSession = await prisma.refreshSession.create({ data });
 
-    return {
-      id: refreshSession.id,
-      userId: refreshSession.userId,
-      expiresAt: refreshSession.expiresAt.toISOString(),
-      createdAt: refreshSession.createdAt.toISOString(),
-      ipAddress: refreshSession.ipAddress,
-      userAgent: refreshSession.userAgent,
-      deviceName: refreshSession.deviceName,
-    };
+    return refreshSession;
+  }
+
+  async findByTokenHash(
+    tokenHash: string,
+  ): Promise<RefreshSessionWithUser | null> {
+    const refreshSession = await prisma.refreshSession.findUnique({
+      where: { tokenHash },
+      include: {
+        user: true,
+      },
+    });
+
+    return refreshSession;
+  }
+
+  async rotateToken({
+    id,
+    tokenHash,
+    expiresAt,
+  }: {
+    id: string;
+    tokenHash: string;
+    expiresAt: Date;
+  }): Promise<RefreshSession> {
+    const refreshSession = await prisma.refreshSession.update({
+      where: { id },
+      data: { tokenHash, expiresAt, lastUsedAt: new Date() },
+    });
+
+    return refreshSession;
   }
 }

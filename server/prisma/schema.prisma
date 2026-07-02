@@ -43,7 +43,7 @@ model User {
 model RefreshSession {
   id         String    @id @default(cuid())
   userId     String
-  tokenHash  String
+  tokenHash  String    @unique
   ipAddress  String?
   userAgent  String?
   deviceName String?

@@ -14,13 +14,3 @@ export type AuthResponseDto = {
   user: UserResponseDto;
   tokens: AuthTokens;
 };
-
-export type RefreshSessionResponseDto = {
-  id: string;
-  userId: string;
-  expiresAt: string;
-  createdAt: string;
-  ipAddress?: string | null;
-  userAgent?: string | null;
-  deviceName?: string | null;
-};

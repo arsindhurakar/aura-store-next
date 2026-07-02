@@ -38,9 +38,7 @@ export const logout = asyncHandler(async (_req: Request, res: Response) => {
 
 export const refresh = asyncHandler(
   async (req: Request<{}, {}, RefreshSessionRequest>, res: Response) => {
-    const data = await service.refresh(req.body, {
-      meta: getRequestMeta(req),
-    });
+    const data = await service.refresh(req.body);
 
     res.json(ok(data));
   },

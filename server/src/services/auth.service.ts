@@ -1,6 +1,3 @@
-import { randomUUID } from "node:crypto";
-import jwt from "jsonwebtoken";
-
 import { AuthResponseDto, UserResponseDto } from "@/dtos/auth.dto.js";
 import {
   IRefreshSessionRepository,
@@ -15,13 +12,18 @@ import { RegisterInput, LoginInput } from "@/schemas/auth.schema.js";
 import { ApiError } from "@/utils/api-error.js";
 import { toUserResponseDto } from "@/mappers/user.mapper.js";
 import { comparePassword, hashPassword } from "@/utils/password.js";
-import { hashRefreshToken, signToken } from "@/utils/jwt.js";
+import {
+  getTokenExpiry,
+  hashRefreshToken,
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "@/utils/jwt.js";
 import {
   RefreshSessionRequest,
   AuthTokens,
   RequestMeta,
 } from "@/types/auth.types.js";
-import { config } from "@/config/index.js";
 
 export class AuthService implements IAuthService {
   constructor(
@@ -57,34 +59,17 @@ export class AuthService implements IAuthService {
       throw ApiError.unauthorized({ message: badCredentialMessage });
     }
 
-    const accessToken = signToken({
-      payload: {
-        sub: user.id,
-        email: user.email,
-        role: user.role,
-      },
-      type: "access",
+    const accessToken = signAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
     });
-
-    const refreshToken = signToken({
-      payload: {
-        sub: user.id,
-        jti: randomUUID(),
-      },
-      type: "refresh",
-    });
-
-    const decoded = jwt.decode(refreshToken);
-    if (!decoded || typeof decoded === "string" || !decoded.exp) {
-      throw ApiError.internal({
-        message: "Failed to decode refresh token expiry",
-      });
-    }
+    const refreshToken = signRefreshToken(user.id);
 
     await this.refreshSessionRepo.create({
       userId: user.id,
       tokenHash: hashRefreshToken(refreshToken),
-      expiresAt: new Date(decoded.exp * 1000),
+      expiresAt: getTokenExpiry(refreshToken),
       ipAddress: options.meta?.ipAddress,
       userAgent: options.meta?.userAgent,
       deviceName: options.meta?.deviceName,
@@ -100,13 +85,37 @@ export class AuthService implements IAuthService {
     return null;
   }
 
-  async refresh(
-    data: RefreshSessionRequest,
-    options?: { meta?: RequestMeta },
-  ): Promise<AuthTokens> {
-    const { refreshToken } = data;
+  async refresh(data: RefreshSessionRequest): Promise<AuthTokens> {
+    const payload = verifyRefreshToken(data.refreshToken);
+    const tokenHash = hashRefreshToken(data.refreshToken);
 
-    return { accessToken: "", refreshToken };
+    const refreshSession =
+      await this.refreshSessionRepo.findByTokenHash(tokenHash);
+
+    if (
+      !refreshSession ||
+      refreshSession.userId !== payload.sub ||
+      refreshSession.revokedAt
+    ) {
+      throw ApiError.unauthorized({ message: "Invalid refresh token" });
+    }
+
+    if (refreshSession.expiresAt < new Date()) {
+      throw ApiError.unauthorized({ message: "Refresh token expired" });
+    }
+
+    const refreshToken = signRefreshToken(refreshSession.userId);
+
+    await this.refreshSessionRepo.rotateToken({
+      id: refreshSession.id,
+      tokenHash: hashRefreshToken(refreshToken),
+      expiresAt: getTokenExpiry(refreshToken),
+    });
+
+    const { id, email, role } = refreshSession.user;
+    const accessToken = signAccessToken({ id, email, role });
+
+    return { accessToken, refreshToken };
   }
 }
 

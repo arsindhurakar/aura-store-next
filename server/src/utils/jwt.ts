@@ -1,5 +1,5 @@
 import jwt, { VerifyOptions, type SignOptions } from "jsonwebtoken";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 import { ApiError } from "@/utils/api-error.js";
 import { config } from "@/config/index.js";
@@ -122,4 +122,45 @@ export const verifyRefreshToken = (token: string): RefreshTokenPayload =>
 
 export function hashRefreshToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
+}
+
+export function getTokenExpiry(refreshToken: string) {
+  const decoded = jwt.decode(refreshToken);
+
+  if (!decoded || typeof decoded === "string" || !decoded.exp) {
+    throw ApiError.internal({
+      message: "Failed to decode refresh token expiry",
+    });
+  }
+
+  return new Date(decoded.exp * 1000);
+}
+
+export function signAccessToken({
+  id,
+  email,
+  role,
+}: {
+  id: string;
+  email: string;
+  role: string;
+}) {
+  return signToken({
+    payload: {
+      sub: id,
+      email,
+      role,
+    },
+    type: "access",
+  });
+}
+
+export function signRefreshToken(userId: string) {
+  return signToken({
+    payload: {
+      sub: userId,
+      jti: randomUUID(),
+    },
+    type: "refresh",
+  });
 }
