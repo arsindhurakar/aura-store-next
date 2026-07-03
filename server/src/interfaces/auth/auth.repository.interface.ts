@@ -24,4 +24,11 @@ export interface IRefreshSessionRepository {
     tokenHash: string;
     expiresAt: Date;
   }): Promise<RefreshSession>;
+  revokeToken({
+    id,
+    revokedAt,
+  }: {
+    id: string;
+    revokedAt: Date;
+  }): Promise<RefreshSession>;
 }

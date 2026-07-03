@@ -65,4 +65,19 @@ export class RefreshSessionRepository implements IRefreshSessionRepository {
 
     return refreshSession;
   }
+
+  async revokeToken({
+    id,
+    revokedAt,
+  }: {
+    id: string;
+    revokedAt: Date;
+  }): Promise<RefreshSession> {
+    const refreshSession = await prisma.refreshSession.update({
+      where: { id },
+      data: { revokedAt },
+    });
+
+    return refreshSession;
+  }
 }

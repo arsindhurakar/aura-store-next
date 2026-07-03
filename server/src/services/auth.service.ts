@@ -31,6 +31,28 @@ export class AuthService implements IAuthService {
     private readonly refreshSessionRepo: IRefreshSessionRepository,
   ) {}
 
+  private async resolveRefreshSession(refreshToken: string) {
+    const payload = verifyRefreshToken(refreshToken);
+    const tokenHash = hashRefreshToken(refreshToken);
+
+    const refreshSession =
+      await this.refreshSessionRepo.findByTokenHash(tokenHash);
+
+    if (
+      !refreshSession ||
+      refreshSession.userId !== payload.sub ||
+      refreshSession.revokedAt
+    ) {
+      throw ApiError.unauthorized({ message: "Invalid refresh token" });
+    }
+
+    if (refreshSession.expiresAt < new Date()) {
+      throw ApiError.unauthorized({ message: "Refresh token expired" });
+    }
+
+    return { refreshSession };
+  }
+
   async register(data: RegisterInput): Promise<UserResponseDto> {
     const hashedPassword = await hashPassword(data.password);
 
@@ -81,28 +103,23 @@ export class AuthService implements IAuthService {
     };
   }
 
-  async logout(): Promise<null> {
+  async logout(data: RefreshSessionRequest): Promise<null> {
+    const { refreshSession } = await this.resolveRefreshSession(
+      data.refreshToken,
+    );
+
+    await this.refreshSessionRepo.revokeToken({
+      id: refreshSession.id,
+      revokedAt: new Date(),
+    });
+
     return null;
   }
 
   async refresh(data: RefreshSessionRequest): Promise<AuthTokens> {
-    const payload = verifyRefreshToken(data.refreshToken);
-    const tokenHash = hashRefreshToken(data.refreshToken);
-
-    const refreshSession =
-      await this.refreshSessionRepo.findByTokenHash(tokenHash);
-
-    if (
-      !refreshSession ||
-      refreshSession.userId !== payload.sub ||
-      refreshSession.revokedAt
-    ) {
-      throw ApiError.unauthorized({ message: "Invalid refresh token" });
-    }
-
-    if (refreshSession.expiresAt < new Date()) {
-      throw ApiError.unauthorized({ message: "Refresh token expired" });
-    }
+    const { refreshSession } = await this.resolveRefreshSession(
+      data.refreshToken,
+    );
 
     const refreshToken = signRefreshToken(refreshSession.userId);
 

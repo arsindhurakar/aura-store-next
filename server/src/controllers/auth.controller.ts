@@ -30,11 +30,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   res.json(ok(data));
 });
 
-export const logout = asyncHandler(async (_req: Request, res: Response) => {
-  const data = await service.logout();
+export const logout = asyncHandler(
+  async (req: Request<{}, {}, RefreshSessionRequest>, res: Response) => {
+    const data = await service.logout(req.body);
 
-  res.json(ok(data));
-});
+    res.json(ok(data));
+  },
+);
 
 export const refresh = asyncHandler(
   async (req: Request<{}, {}, RefreshSessionRequest>, res: Response) => {

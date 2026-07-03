@@ -12,6 +12,6 @@ export interface IAuthService {
     data: LoginInput,
     options?: { meta?: RequestMeta },
   ): Promise<AuthResponseDto>;
-  logout(): Promise<null>;
+  logout(data: RefreshSessionRequest): Promise<null>;
   refresh(data: RefreshSessionRequest): Promise<AuthTokens>;
 }
