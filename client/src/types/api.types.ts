@@ -11,3 +11,8 @@ export interface ProductQuery {
   search?: string;
   sort?: ProductSort;
 }
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}

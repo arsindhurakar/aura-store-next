@@ -5,13 +5,13 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck, Truck, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
-import { ProductCard } from "@/features/products/components/ProductCard";
-import { useFeatured } from "@/features/products/hooks/useProducts";
+import { ProductCard } from "@/features/products/components/product-card";
+import { useFeatured } from "@/features/products/hooks/use-product-queries";
 import { Skeleton } from "@/components/ui/skeleton";
 import heroPhone from "@/assets/images/jpg/hero-phone.jpg";
 import { useCategories } from "@/features/categories/hooks/useCategory";
 import { Category } from "@/features/categories/types";
-import { Product } from "@/features/products/types";
+import { Product } from "@/features/products/product.types";
 
 export default function PublicPage() {
   const { data: featured, isLoading } = useFeatured();

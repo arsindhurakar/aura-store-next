@@ -2,13 +2,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StaticImageData } from "next/image";
 
-import { Product } from "@/features/products/types";
+import { Product } from "@/features/products/product.types";
 
 export interface CartLine {
   productId: string;
   name: string;
   slug: string;
-  image: StaticImageData;
+  image: StaticImageData | string;
   unitPrice: number;
   quantity: number;
   color?: string;

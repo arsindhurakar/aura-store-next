@@ -15,19 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCreateProduct, useUpdateProduct } from "@/features/products/hooks/use-product-mutations";
+import { Product } from "@/features/products/product.types";
+import { mapFormToCreateProductDto, mapFormToUpdateProductDto } from "@/features/products/utils/product.dto";
 import {
   type ProductFormInput,
   productFormSchema,
 } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export function ProductFormDialog({
-  editing,
+  product,
   onDone,
 }: {
-  editing: string | null;
+  product: Product | null;
   onDone: () => void;
 }) {
   const form = useForm<ProductFormInput>({
@@ -43,16 +47,49 @@ export function ProductFormDialog({
     },
   });
 
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
+
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        name: product.name,
+        brand: product.brand,
+        category: product.category,
+        price: product.price,
+        salePrice: product.salePrice ?? 0,
+        stockStatus: product.stockStatus,
+        description: product.description,
+      })
+    }
+  }, [product, form])
+
   const onSubmit = (data: ProductFormInput) => {
-    console.log(data);
+    if (product) {
+      updateProduct.mutate({id: product.id, body: mapFormToUpdateProductDto(data)}, {
+        onSuccess: () => {
+        toast.success("Product updated successfully");
+        form.reset();
+        onDone();
+      },
+        onError(err: Error){
+          toast.error(err.message);
+        }
+      })
 
-    toast.success(
-      editing ? "Product updated (mock)" : "Product created (mock)",
-    );
+      return;
+    }
 
-    form.reset();
-
-    onDone();
+    createProduct.mutate(mapFormToCreateProductDto(data), {
+      onSuccess: () => {
+        toast.success("Product created successfully");
+        form.reset();
+        onDone();
+      },
+      onError(err: Error){
+        toast.error(err.message);
+      }
+    })
   };
 
   const onCancel = () => {
@@ -64,7 +101,7 @@ export function ProductFormDialog({
     <DialogContent className="max-w-2xl">
       <DialogHeader>
         <DialogTitle className="font-display text-2xl">
-          {editing ? "Edit product" : "New product"}
+          {product ? "Edit product" : "New product"}
         </DialogTitle>
       </DialogHeader>
 

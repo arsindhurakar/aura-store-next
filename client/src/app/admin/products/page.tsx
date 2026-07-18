@@ -18,15 +18,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useProducts } from "@/features/products/hooks/useProducts";
-import { ProductFormDialog } from "@/features/products/components/ProductFormDialog";
+import { useProducts } from "@/features/products/hooks/use-product-queries";
+import { ProductFormDialog } from "@/features/products/components/product-form-dialog";
 import { Button } from "@/components/ui/button";
+import { useDeleteProduct } from "@/features/products/hooks/use-product-mutations";
+import { Product } from "@/features/products/product.types";
 
 export default function ProductsPage() {
   const { data: products } = useProducts();
+  const deleteProduct = useDeleteProduct();
 
-  const [editing, setEditing] = useState<string | null>(null);
+  const [productToUpdate, setProductToUpdate] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
+
+  const handleDeleteProduct = (id: string) => {
+    deleteProduct.mutate(id,
+      {
+        onSuccess: () => {
+          toast.success("Product deleted successfully")
+        },
+        onError: (err: Error) => {
+          toast.error(err.message)
+        }
+      }
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -42,14 +58,14 @@ export default function ProductsPage() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
-              onClick={() => setEditing(null)}
+              onClick={() => setProductToUpdate(null)}
             >
               <Plus className="h-4 w-4" />
               New product
             </Button>
           </DialogTrigger>
 
-          <ProductFormDialog editing={editing} onDone={() => setOpen(false)} />
+          <ProductFormDialog product={productToUpdate} onDone={() => setOpen(false)} />
         </Dialog>
       </div>
 
@@ -115,19 +131,19 @@ export default function ProductsPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-end gap-1">
                     <Dialog
-                      open={editing === product.id && open}
+                      open={productToUpdate?.id === product.id && open}
                       onOpenChange={(isOpen) => {
                         setOpen(isOpen);
 
                         if (!isOpen) {
-                          setEditing(null);
+                          setProductToUpdate(null);
                         }
                       }}
                     >
                       <DialogTrigger asChild>
                         <button
                           onClick={() => {
-                            setEditing(product.id);
+                            setProductToUpdate(product);
                             setOpen(true);
                           }}
                           className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition cursor-pointer hover:bg-muted hover:text-foreground"
@@ -138,10 +154,10 @@ export default function ProductsPage() {
                       </DialogTrigger>
 
                       <ProductFormDialog
-                        editing={editing}
+                        product={productToUpdate}
                         onDone={() => {
                           setOpen(false);
-                          setEditing(null);
+                          setProductToUpdate(null);
                         }}
                       />
                     </Dialog>
@@ -172,9 +188,7 @@ export default function ProductsPage() {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
 
                           <AlertDialogAction
-                            onClick={() =>
-                              toast.success("Product deleted (mock)")
-                            }
+                            onClick={() => handleDeleteProduct(product.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             Delete

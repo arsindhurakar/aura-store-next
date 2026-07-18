@@ -6,9 +6,9 @@ import { Search as SearchIcon } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { EmptyState } from "@/components/common/EmptyState";
-import { ProductGridSkeleton } from "@/features/products/components/ProductGridSkeleton";
-import { ProductCard } from "@/features/products/components/ProductCard";
-import { useProducts } from "@/features/products/hooks/useProducts";
+import { ProductGridSkeleton } from "@/features/products/components/product-grid-skeleton";
+import { ProductCard } from "@/features/products/components/product-card";
+import { useProducts } from "@/features/products/hooks/use-product-queries";
 
 const SUGGESTIONS = [ 
   "Aether Pro",

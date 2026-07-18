@@ -5,7 +5,7 @@ import Image from "next/image";
 
 import { formatPrice, STATUS_LABEL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Product } from "../types";
+import { Product } from "@/features/products/product.types";
 
 export function ProductCard({
   product,

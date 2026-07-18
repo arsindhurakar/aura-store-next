@@ -10,7 +10,7 @@ export type OrderStatus =
 export interface OrderItem {
   productId: string;
   name: string;
-  image: StaticImageData;
+  image: StaticImageData | string;
   unitPrice: number;
   quantity: number;
 }

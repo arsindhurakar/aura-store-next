@@ -6,11 +6,11 @@ import { useMemo, useState } from "react";
 import { LayoutGrid, List, PackageOpen } from "lucide-react";
 import Image from "next/image";
 
-import { useProducts } from "@/features/products/hooks/useProducts";
+import { useProducts } from "@/features/products/hooks/use-product-queries";
 import { useCategories } from "@/features/categories/hooks/useCategory";
 import { Container } from "@/components/layout/Container";
-import { ProductCard } from "@/features/products/components/ProductCard";
-import { ProductGridSkeleton } from "@/features/products/components/ProductGridSkeleton";
+import { ProductCard } from "@/features/products/components/product-card";
+import { ProductGridSkeleton } from "@/features/products/components/product-grid-skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { CATEGORY_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";

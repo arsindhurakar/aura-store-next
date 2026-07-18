@@ -3,11 +3,6 @@ import { urlSchema } from "./index.js";
 
 export const createProductSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
-  slug: z
-    .string()
-    .trim()
-    .min(2, "Slug is required")
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Invalid slug format"),
   price: z.coerce.number().positive("Price must be greater than 0"),
   salePrice: z.coerce.number().positive().optional(),
   description: z.string().trim().min(10, "Description is too short"),

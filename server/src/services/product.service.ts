@@ -8,6 +8,7 @@ import { ProductResponseDto } from "@/dtos/product.dto.js";
 import { toProductResponseDto } from "@/mappers/product.mapper.js";
 import { ProductRepository } from "@/repositories/product.repository.js";
 import { ApiError } from "@/utils/api-error.js";
+import { createSlug } from "@/utils/slug.js";
 
 export class ProductService implements IProductService {
   constructor(private readonly repo: IProductRepository) {}
@@ -32,6 +33,7 @@ export class ProductService implements IProductService {
     const product = await this.repo.create({
       ...data,
       featured: data.featured ?? false,
+      slug: createSlug(data.name),
     });
 
     return toProductResponseDto(product);

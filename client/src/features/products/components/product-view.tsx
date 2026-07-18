@@ -7,8 +7,8 @@ import { Minus, Plus, ShoppingBag, Truck, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Container } from "@/components/layout/Container";
-import { ProductCard } from "@/features/products/components/ProductCard";
-import { Product } from "@/features/products/types";
+import { ProductCard } from "@/features/products/components/product-card";
+import { Product } from "@/features/products/product.types";
 import { useCart } from "@/store/cart.store";
 import { STATUS_LABEL, formatPrice } from "@/lib/constants";
 import { cn } from "@/lib/utils";

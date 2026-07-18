@@ -1,44 +1,29 @@
-import type { ProductQuery } from "@/types/api.types";
+import type { ApiResponse, ProductQuery } from "@/types/api.types";
 import { products, brands } from "@/mocks/products.mock";
-import { Product } from "../types";
+import {
+  adaptProduct,
+  adaptProducts,
+} from "@/features/products/adapters/product.adapter";
+import {
+  CreateProductDto,
+  Product,
+  ProductResponseDto,
+  UpdateProductDto,
+} from "@/features/products/product.types";
+import api from "@/services/axios";
+import { API_ENDPOINTS } from "@/constants/api.constants";
 
 const wait = (ms = 250) => new Promise((r) => setTimeout(r, ms));
 
 export const productApi = {
   async list(query: ProductQuery = {}): Promise<Product[]> {
-    await wait();
-    let result = [...products];
-    if (query.category)
-      result = result.filter((p) => p.category === query.category);
-    if (query.brand) result = result.filter((p) => p.brand === query.brand);
-    if (query.search) {
-      const q = query.search.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.brand.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q),
-      );
-    }
-    switch (query.sort) {
-      case "price_asc":
-        result.sort(
-          (a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price),
-        );
-        break;
-      case "price_desc":
-        result.sort(
-          (a, b) => (b.salePrice ?? b.price) - (a.salePrice ?? a.price),
-        );
-        break;
-      case "featured":
-        result.sort((a, b) => Number(b.featured) - Number(a.featured));
-        break;
-      case "newest":
-      default:
-        result.sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
-    }
-    return result;
+    const response = await api.get<ApiResponse<ProductResponseDto[]>>(
+      API_ENDPOINTS.PRODUCTS,
+      {
+        params: query,
+      },
+    );
+    return adaptProducts(response.data.data);
   },
 
   async getBySlug(slug: string) {
@@ -66,5 +51,36 @@ export const productApi = {
     await wait();
 
     return brands;
+  },
+
+  async create(body: CreateProductDto): Promise<Product> {
+    const response = await api.post<ApiResponse<ProductResponseDto>>(
+      API_ENDPOINTS.PRODUCTS,
+      body,
+    );
+
+    return adaptProduct(response.data.data);
+  },
+
+  async update({
+    id,
+    body,
+  }: {
+    id: string;
+    body: UpdateProductDto;
+  }): Promise<Product> {
+    const response = await api.patch<ApiResponse<ProductResponseDto>>(
+      `${API_ENDPOINTS.PRODUCTS}/${id}`,
+      body,
+    );
+    return adaptProduct(response.data.data);
+  },
+
+  async delete(id: string): Promise<Product> {
+    const response = await api.delete<ApiResponse<ProductResponseDto>>(
+      `${API_ENDPOINTS.PRODUCTS}/${id}`,
+    );
+
+    return adaptProduct(response.data.data);
   },
 };

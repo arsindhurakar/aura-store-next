@@ -12,7 +12,7 @@ import {
 
 import { useOrders } from "@/hooks/useOrders";
 import { formatPrice } from "@/lib/constants";
-import { useProducts } from "@/features/products/hooks/useProducts";
+import { useProducts } from "@/features/products/hooks/use-product-queries";
 import { StatusPill } from "@/features/dashboard/components/StatusPill";
 
 export default function DashboardPage() {

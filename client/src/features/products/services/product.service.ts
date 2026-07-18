@@ -1,9 +1,41 @@
-import { productApi } from "../api/product.api";
+import { ProductQuery } from "@/types/api.types";
+import {
+  CreateProductDto,
+  Product,
+  UpdateProductDto,
+} from "@/features/products/product.types";
+import { productApi } from "@/features/products/api/product.api";
 
 export const productService = {
-  getProducts: productApi.list,
-  getProductBySlug: productApi.getBySlug,
-  getFeaturedProducts: productApi.featured,
-  getRelated: productApi.related,
-  getBrands: productApi.brands,
+  getProducts(query: ProductQuery = {}): Promise<Product[]> {
+    return productApi.list(query);
+  },
+
+  getProductBySlug(slug: string) {
+    return productApi.getBySlug(slug);
+  },
+
+  getFeaturedProducts() {
+    return productApi.featured();
+  },
+
+  getRelated(slug: string) {
+    return productApi.related(slug);
+  },
+
+  getBrands() {
+    return productApi.brands();
+  },
+
+  createProduct(body: CreateProductDto): Promise<Product> {
+    return productApi.create(body);
+  },
+
+  updateProduct({ id, body }: { id: string; body: UpdateProductDto }) {
+    return productApi.update({ id, body });
+  },
+
+  deleteProduct(id: string): Promise<Product> {
+    return productApi.delete(id);
+  },
 };

@@ -7,7 +7,7 @@ import type {
 export interface IProductRepository {
   findMany(): Promise<Product[]>;
   findById(id: string): Promise<Product | null>;
-  create(data: CreateProductInput): Promise<Product>;
+  create(data: CreateProductInput & { slug: string }): Promise<Product>;
   update(id: string, data: UpdateProductInput): Promise<Product>;
   delete(id: string): Promise<Product>;
 }
