@@ -46,7 +46,10 @@ export class ProductService implements IProductService {
     id: string;
     data: UpdateProductInput;
   }): Promise<ProductResponseDto> {
-    const product = await this.repo.update(id, data);
+    const product = await this.repo.update(id, {
+      ...data,
+      slug: createSlug(data.name),
+    });
 
     return toProductResponseDto(product);
   }

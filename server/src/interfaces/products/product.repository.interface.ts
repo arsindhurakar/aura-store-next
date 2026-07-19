@@ -8,6 +8,9 @@ export interface IProductRepository {
   findMany(): Promise<Product[]>;
   findById(id: string): Promise<Product | null>;
   create(data: CreateProductInput & { slug: string }): Promise<Product>;
-  update(id: string, data: UpdateProductInput): Promise<Product>;
+  update(
+    id: string,
+    data: UpdateProductInput & { slug: string },
+  ): Promise<Product>;
   delete(id: string): Promise<Product>;
 }
