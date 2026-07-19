@@ -4,44 +4,39 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, Lock } from "lucide-react";
 import { toast } from "sonner";
 
-import { loginSchema, type LoginInput } from "@/lib/validators";
-import { authService } from "@/features/auth/services/auth.service";
+import { loginFormSchema, type LoginFormInput } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldLabel } from "@/components/common/FieldLabel";
 import { FieldError } from "@/components/common/FieldError";
+import { useLogin } from "@/features/auth/hooks/use-auth.mutation";
 
 export default function AdminLoginPage() {
   const router = useRouter();
 
-  const form = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<LoginFormInput>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const login = useMutation({
-    mutationFn: ({ email, password }: LoginInput) =>
-      authService.login(email, password),
+  const login = useLogin();
 
-    onSuccess: () => {
-      toast.success("Welcome back");
-      router.push("/admin/dashboard");
-    },
-
-    onError: () => {
-      toast.error("Invalid credentials");
-    },
-  });
-
-  const onSubmit = (data: LoginInput) => {
-    login.mutate(data);
+  const onSubmit = (data: LoginFormInput) => {
+    login.mutate(data, {
+      onSuccess: () => {
+        toast.success("Logged in successfully");
+        router.push("/admin/dashboard");
+      },
+      onError: (err: Error) => {
+        toast.error(err.message);
+      },
+    });
   };
 
   return (
@@ -59,19 +54,16 @@ export default function AdminLoginPage() {
 
         <div>
           <div className="text-eyebrow">Operations</div>
-
           <h2 className="mt-4 font-display text-5xl tracking-tight text-balance">
             The store, in your hands.
           </h2>
-
           <p className="mt-4 max-w-sm text-muted-foreground">
-            Inventory, orders, settings — managed from one quiet, premium console.
+            Inventory, orders, settings — managed from one quiet, premium
+            console.
           </p>
         </div>
 
-        <div className="text-xs text-muted-foreground">
-          © NOIR Devices
-        </div>
+        <div className="text-xs text-muted-foreground">© NOIR Devices</div>
       </div>
 
       {/* RIGHT SIDE */}
@@ -81,11 +73,9 @@ export default function AdminLoginPage() {
           className="w-full max-w-sm"
         >
           <div className="text-eyebrow">Sign in</div>
-
           <h1 className="mt-3 font-display text-4xl tracking-tight">
             Welcome back.
           </h1>
-
           <p className="mt-2 text-sm text-muted-foreground">
             Any credentials work in this demo.
           </p>
@@ -95,32 +85,27 @@ export default function AdminLoginPage() {
             {/* EMAIL */}
             <div>
               <FieldLabel>Email</FieldLabel>
-
               <Input
                 {...form.register("email")}
                 placeholder="admin@noir.com"
                 className={fieldClass}
+                disabled={login.isPending}
               />
 
-              <FieldError
-                error={form.formState.errors.email?.message}
-              />
+              <FieldError error={form.formState.errors.email?.message} />
             </div>
 
             {/* PASSWORD */}
             <div>
               <FieldLabel>Password</FieldLabel>
-
               <Input
                 type="password"
                 {...form.register("password")}
                 placeholder="••••••••"
                 className={fieldClass}
+                disabled={login.isPending}
               />
-
-              <FieldError
-                error={form.formState.errors.password?.message}
-              />
+              <FieldError error={form.formState.errors.password?.message} />
             </div>
           </div>
 
@@ -152,5 +137,4 @@ export default function AdminLoginPage() {
   );
 }
 
-const fieldClass =
-  "mt-2 h-12";
+const fieldClass = "mt-2 h-12";

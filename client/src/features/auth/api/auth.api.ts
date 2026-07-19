@@ -1,16 +1,29 @@
-const wait = (ms = 350) => new Promise((r) => setTimeout(r, ms));
+import { API_ENDPOINTS } from "@/constants/api.constants";
+import { adaptLogin } from "@/features/auth/adapters/auth.adapter";
+import type {
+  AuthResponseDto,
+  Login,
+  LoginDto,
+} from "@/features/auth/types/auth.types";
+import api from "@/services/axios";
+import type { ApiResponse } from "@/types/api.types";
 
 export const authApi = {
-  async login(
-    email: string,
-    password: string,
-  ): Promise<{ token: string; email: string }> {
-    await wait();
-    if (!email || !password) throw new Error("Email and password required");
-    // Replace with real call. Accepts any credentials in mock mode.
-    return { token: "mock_admin_token", email };
+  async login(body: LoginDto): Promise<Login> {
+    const response = await api.post<ApiResponse<AuthResponseDto>>(
+      `${API_ENDPOINTS.AUTH}/login`,
+      body,
+    );
+
+    return adaptLogin(response.data.data);
   },
-  async logout(): Promise<void> {
-    await wait(80);
+
+  async logout(body: { refreshToken: string }): Promise<null> {
+    const response = await api.post<ApiResponse<null>>(
+      `${API_ENDPOINTS.AUTH}/logout`,
+      body,
+    );
+
+    return response.data.data;
   },
 };

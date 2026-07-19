@@ -23,17 +23,17 @@ export interface AuthTokens extends RefreshSessionRequest {
   accessToken: string;
 }
 
-export type RefreshSessionInput = {
+export interface RefreshSessionInput {
   userId: string;
   tokenHash: string;
   expiresAt: Date;
-};
+}
 
-export type RequestMeta = {
+export interface RequestMeta {
   ipAddress?: string;
   userAgent?: string;
   deviceName?: string;
-};
+}
 
 export type RefreshSessionWithUser = Prisma.RefreshSessionGetPayload<{
   include: {

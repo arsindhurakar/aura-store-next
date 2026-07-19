@@ -7,13 +7,15 @@ export const checkoutSchema = z.object({
   address: z.string().min(8, "Please enter your full delivery address"),
   notes: z.string().max(500).optional().or(z.literal("")),
 });
+
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
-export const loginSchema = z.object({
+export const loginFormSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "At least 6 characters"),
 });
-export type LoginInput = z.infer<typeof loginSchema>;
+
+export type LoginFormInput = z.infer<typeof loginFormSchema>;
 
 export const productFormSchema = z.object({
   name: z.string().min(2, "Please enter the product name"),
@@ -38,4 +40,5 @@ export const productFormSchema = z.object({
   }),
   description: z.string().min(10, "Please enter a more detailed description"),
 });
+
 export type ProductFormInput = z.infer<typeof productFormSchema>;

@@ -1,4 +1,4 @@
-import type { Order } from "@/types/order.types";
+import type { Order } from "@/features/orders/types/order.types";
 import heroPhone from "@/assets/images/jpg/hero-phone.jpg";
 import pBuds from "@/assets/images/jpg/p-buds.jpg";
 import pWatch from "@/assets/images/jpg/p-watch.jpg";

@@ -1,5 +1,6 @@
-import { ProductCategory, StockStatus } from "@/types";
 import { StaticImageData } from "next/image";
+
+import type { ProductCategory, StockStatus } from "@/types/shared.types";
 
 export interface ProductSpec {
   label: string;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -9,8 +9,11 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { toast } from "sonner";
+
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
+import { useLogout } from "@/features/auth/hooks/use-auth.mutation";
 
 const nav = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -21,7 +24,18 @@ const nav = [
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Logged out successfully");
+      },
+      onError: (err: Error) => {
+        toast.error(err.message);
+      },
+    });
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -60,8 +74,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
 
           <button
-            onClick={() => router.push("/admin")}
-            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+            disabled={logout.isPending}
           >
             <LogOut className="h-3.5 w-3.5" />
             Sign out

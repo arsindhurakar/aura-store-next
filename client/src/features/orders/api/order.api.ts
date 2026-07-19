@@ -1,4 +1,8 @@
-import type { Order, CustomerInfo, OrderItem } from "@/types/order.types";
+import type {
+  Order,
+  CustomerInfo,
+  OrderItem,
+} from "@/features/orders/types/order.types";
 import { ordersMock } from "@/mocks/orders.mock";
 
 const wait = (ms = 250) => new Promise((r) => setTimeout(r, ms));

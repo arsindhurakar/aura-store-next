@@ -14,10 +14,16 @@ import { ProductGridSkeleton } from "@/features/products/components/product-grid
 import { EmptyState } from "@/components/common/EmptyState";
 import { CATEGORY_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { ProductQuery } from "@/types/api.types";
-import { ProductSort } from "@/types";
+import type { ProductQuery } from "@/types/api.types";
+import type { ProductSort } from "@/types/shared.types";
 import { useBrands } from "@/features/brands/hooks/useBrand";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DEFAULT_SORT: ProductSort = "newest";
 

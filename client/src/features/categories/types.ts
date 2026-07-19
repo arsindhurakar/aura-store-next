@@ -1,5 +1,6 @@
-import { ProductCategory } from "@/types";
 import { StaticImageData } from "next/image";
+
+import type { ProductCategory } from "@/types/shared.types";
 
 export interface Category {
   id: ProductCategory;

@@ -1,4 +1,4 @@
-import { ProductSort } from ".";
+import type { ProductSort } from "./shared.types";
 
 export interface ApiListResult<T> {
   items: T[];

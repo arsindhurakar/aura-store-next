@@ -1,4 +1,4 @@
-import {
+import type {
   CreateProductDto,
   UpdateProductDto,
 } from "@/features/products/types/product.types";
