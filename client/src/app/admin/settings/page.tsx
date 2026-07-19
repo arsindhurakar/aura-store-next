@@ -12,16 +12,13 @@ export default function SettingsPage() {
     <div className="space-y-10">
       <div>
         <div className="text-eyebrow">Account</div>
-
         <h1 className="mt-2 font-display text-4xl tracking-tight">Settings</h1>
       </div>
 
       <Section title="Store" desc="Public storefront information.">
         <Field label="Store name" defaultValue="NOIR Devices" />
-
         <Field label="Support email" defaultValue="support@noir.com" />
-
-        <Field label="Currency" defaultValue="USD" />
+        <Field label="Currency" defaultValue="NPR" />
       </Section>
 
       <Section title="Notifications" desc="Choose what we ping you about.">
@@ -30,13 +27,11 @@ export default function SettingsPage() {
           desc="Get notified the moment a new order comes in."
           defaultChecked
         />
-
         <Toggle
           label="Low stock alerts"
           desc="When a product drops below 5 units."
           defaultChecked
         />
-
         <Toggle
           label="Weekly digest"
           desc="A summary delivered every Monday morning."
@@ -45,14 +40,11 @@ export default function SettingsPage() {
 
       <Section title="Profile" desc="Your admin profile.">
         <Field label="Full name" defaultValue="Alex Morgan" />
-
         <Field label="Email" defaultValue="alex@noir.com" />
       </Section>
 
       <div>
-        <Button
-          onClick={() => toast.success("Settings saved (mock)")}
-        >
+        <Button onClick={() => toast.success("Settings saved (mock)")}>
           Save changes
         </Button>
       </div>

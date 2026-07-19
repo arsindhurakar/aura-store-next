@@ -1,3 +1,8 @@
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+
 import { FieldError } from "@/components/common/FieldError";
 import { FieldLabel } from "@/components/common/FieldLabel";
 import { Button } from "@/components/ui/button";
@@ -15,43 +20,55 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCreateProduct, useUpdateProduct } from "@/features/products/hooks/use-product-mutations";
-import { Product } from "@/features/products/product.types";
-import { mapFormToCreateProductDto, mapFormToUpdateProductDto } from "@/features/products/utils/product.dto";
 import {
-  type ProductFormInput,
-  productFormSchema,
-} from "@/lib/validators";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
+  useCreateProduct,
+  useUpdateProduct,
+} from "@/features/products/hooks/use-product-mutations";
+import { Product } from "@/features/products/product.types";
+import {
+  mapFormToCreateProductDto,
+  mapFormToUpdateProductDto,
+} from "@/features/products/utils/product.dto";
+import { productFormSchema, type ProductFormInput } from "@/lib/validators";
 
-export function ProductFormDialog({
-  product,
-  onDone,
-}: {
+type Props = {
+  open: boolean;
+  mode: "create" | "edit";
   product: Product | null;
   onDone: () => void;
-}) {
+};
+
+const defaultValues: ProductFormInput = {
+  name: "",
+  brand: "",
+  category: "phones",
+  price: 0,
+  salePrice: 0,
+  stockStatus: "in_stock",
+  description: "",
+};
+
+export function ProductFormDialog({ open, mode, product, onDone }: Props) {
   const form = useForm<ProductFormInput>({
     resolver: zodResolver(productFormSchema),
-    defaultValues: {
-      name: "",
-      brand: "",
-      category: "phones",
-      price: 0,
-      salePrice: 0,
-      stockStatus: "in_stock",
-      description: "",
-    },
+    defaultValues,
   });
 
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
+  const isPending = createProduct.isPending || updateProduct.isPending;
+
   useEffect(() => {
-    if (product) {
+    if (!open) {
+      form.reset(defaultValues);
+    }
+  }, [open, form]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (mode === "edit" && product) {
       form.reset({
         name: product.name,
         brand: product.brand,
@@ -60,22 +77,27 @@ export function ProductFormDialog({
         salePrice: product.salePrice ?? 0,
         stockStatus: product.stockStatus,
         description: product.description,
-      })
+      });
     }
-  }, [product, form])
+  }, [open, mode, product, form]);
 
   const onSubmit = (data: ProductFormInput) => {
-    if (product) {
-      updateProduct.mutate({id: product.id, body: mapFormToUpdateProductDto(data)}, {
-        onSuccess: () => {
-        toast.success("Product updated successfully");
-        form.reset();
-        onDone();
-      },
-        onError(err: Error){
-          toast.error(err.message);
-        }
-      })
+    if (mode === "edit" && product) {
+      updateProduct.mutate(
+        {
+          id: product.id,
+          body: mapFormToUpdateProductDto(data),
+        },
+        {
+          onSuccess: () => {
+            toast.success("Product updated successfully");
+            onDone();
+          },
+          onError: (err: Error) => {
+            toast.error(err.message);
+          },
+        },
+      );
 
       return;
     }
@@ -83,17 +105,15 @@ export function ProductFormDialog({
     createProduct.mutate(mapFormToCreateProductDto(data), {
       onSuccess: () => {
         toast.success("Product created successfully");
-        form.reset();
         onDone();
       },
-      onError(err: Error){
+      onError: (err: Error) => {
         toast.error(err.message);
-      }
-    })
+      },
+    });
   };
 
-  const onCancel = () => {
-    form.reset();
+  const handleCancel = () => {
     onDone();
   };
 
@@ -101,7 +121,7 @@ export function ProductFormDialog({
     <DialogContent className="max-w-2xl">
       <DialogHeader>
         <DialogTitle className="font-display text-2xl">
-          {product ? "Edit product" : "New product"}
+          {mode === "edit" ? "Edit product" : "New product"}
         </DialogTitle>
       </DialogHeader>
 
@@ -111,33 +131,26 @@ export function ProductFormDialog({
       >
         <div className="sm:col-span-2">
           <FieldLabel>Name</FieldLabel>
-
           <Input
             {...form.register("name")}
             className={fieldClass}
+            disabled={isPending}
           />
-
-          <FieldError
-            error={form.formState.errors.name?.message}
-          />
+          <FieldError error={form.formState.errors.name?.message} />
         </div>
 
         <div>
           <FieldLabel>Brand</FieldLabel>
-
           <Input
             {...form.register("brand")}
             className={fieldClass}
+            disabled={isPending}
           />
-
-          <FieldError
-            error={form.formState.errors.brand?.message}
-          />
+          <FieldError error={form.formState.errors.brand?.message} />
         </div>
 
         <div>
           <FieldLabel>Category</FieldLabel>
-
           <Controller
             control={form.control}
             name="category"
@@ -145,67 +158,51 @@ export function ProductFormDialog({
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
+                disabled={isPending}
               >
                 <SelectTrigger className={fieldClass}>
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue placeholder="Select category" />
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="phones">
-                    Mobile Phones
-                  </SelectItem>
-
-                  <SelectItem value="audio">
-                    Audio
-                  </SelectItem>
-
-                  <SelectItem value="wearables">
-                    Wearables
-                  </SelectItem>
-
-                  <SelectItem value="accessories">
-                    Accessories
-                  </SelectItem>
+                  <SelectItem value="phones">Mobile Phones</SelectItem>
+                  <SelectItem value="audio">Audio</SelectItem>
+                  <SelectItem value="wearables">Wearables</SelectItem>
+                  <SelectItem value="accessories">Accessories</SelectItem>
                 </SelectContent>
               </Select>
             )}
           />
 
-          <FieldError
-            error={form.formState.errors.category?.message}
-          />
+          <FieldError error={form.formState.errors.category?.message} />
         </div>
 
         <div>
-          <FieldLabel>Price (USD)</FieldLabel>
-
+          <FieldLabel>Price (NPR)</FieldLabel>
           <Input
             type="number"
             {...form.register("price", {
               valueAsNumber: true,
             })}
             className={fieldClass}
+            disabled={isPending}
           />
 
-          <FieldError
-            error={form.formState.errors.price?.message}
-          />
+          <FieldError error={form.formState.errors.price?.message} />
         </div>
 
         <div>
-          <FieldLabel>Sale Price (USD)</FieldLabel>
-
+          <FieldLabel>Sale Price (NPR)</FieldLabel>
           <Input
             type="number"
             {...form.register("salePrice", {
               valueAsNumber: true,
             })}
             className={fieldClass}
+            disabled={isPending}
           />
 
-          <FieldError
-            error={form.formState.errors.salePrice?.message}
-          />
+          <FieldError error={form.formState.errors.salePrice?.message} />
         </div>
 
         <div className="sm:col-span-2">
@@ -218,31 +215,22 @@ export function ProductFormDialog({
               <Select
                 value={field.value}
                 onValueChange={field.onChange}
+                disabled={isPending}
               >
                 <SelectTrigger className={fieldClass}>
                   <SelectValue placeholder="Select stock status" />
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value="in_stock">
-                    In Stock
-                  </SelectItem>
-
-                  <SelectItem value="low_stock">
-                    Low Stock
-                  </SelectItem>
-
-                  <SelectItem value="out_of_stock">
-                    Out of Stock
-                  </SelectItem>
+                  <SelectItem value="in_stock">In Stock</SelectItem>
+                  <SelectItem value="low_stock">Low Stock</SelectItem>
+                  <SelectItem value="out_of_stock">Out of Stock</SelectItem>
                 </SelectContent>
               </Select>
             )}
           />
 
-          <FieldError
-            error={form.formState.errors.stockStatus?.message}
-          />
+          <FieldError error={form.formState.errors.stockStatus?.message} />
         </div>
 
         <div className="sm:col-span-2">
@@ -252,26 +240,24 @@ export function ProductFormDialog({
             rows={4}
             {...form.register("description")}
             className={textareaClass}
+            disabled={isPending}
           />
 
-          <FieldError
-            error={form.formState.errors.description?.message}
-          />
+          <FieldError error={form.formState.errors.description?.message} />
         </div>
 
         <DialogFooter className="sm:col-span-2">
           <Button
             type="button"
             variant="outline"
-            onClick={onCancel}
+            onClick={handleCancel}
+            disabled={isPending}
           >
             Cancel
           </Button>
 
-          <Button
-            type="submit"
-          >
-            Save
+          <Button type="submit" disabled={isPending}>
+            {mode === "edit" ? "Update Product" : "Create Product"}
           </Button>
         </DialogFooter>
       </form>
@@ -279,8 +265,7 @@ export function ProductFormDialog({
   );
 }
 
-const fieldClass =
-  "mt-2 rounded-xl border-border";
+const fieldClass = "mt-2 rounded-xl border-border";
 
 const textareaClass =
-  "mt-2 w-full rounded-xl border border-border bg-transparent px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none";
+  "mt-2 w-full resize-none rounded-xl border border-border bg-transparent px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/30";
