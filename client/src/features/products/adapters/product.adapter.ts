@@ -1,4 +1,7 @@
-import { Product, ProductResponseDto } from "@/features/products/product.types";
+import {
+  Product,
+  ProductResponseDto,
+} from "@/features/products/types/product.types";
 
 export function adaptProduct(dto: ProductResponseDto): Product {
   return {

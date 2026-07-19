@@ -60,4 +60,4 @@ export interface CreateProductDto {
   featured: boolean;
 }
 
-export interface UpdateProductDto extends CreateProductDto {}
+export type UpdateProductDto = CreateProductDto;

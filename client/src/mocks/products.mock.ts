@@ -8,7 +8,7 @@ import pCharger from "@/assets/images/jpg/p-charger.jpg";
 import pWatch from "@/assets/images/jpg/p-watch.jpg";
 import pCase from "@/assets/images/jpg/p-case.jpg";
 import pCable from "@/assets/images/jpg/p-cable.jpg";
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 
 export const products: Product[] = [
   {

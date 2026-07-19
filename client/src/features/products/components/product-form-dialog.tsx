@@ -24,11 +24,11 @@ import {
   useCreateProduct,
   useUpdateProduct,
 } from "@/features/products/hooks/use-product-mutations";
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 import {
   mapFormToCreateProductDto,
   mapFormToUpdateProductDto,
-} from "@/features/products/utils/product.dto";
+} from "@/features/products/utils/product.dto.util";
 import { productFormSchema, type ProductFormInput } from "@/lib/validators";
 
 type Props = {

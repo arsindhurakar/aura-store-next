@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/features/products/components/product-card";
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 import { useCart } from "@/store/cart.store";
 import { STATUS_LABEL, formatPrice } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -19,10 +19,7 @@ interface ProductViewProps {
   related?: Product[];
 }
 
-export function ProductView({
-  product,
-  related = [],
-}: ProductViewProps) {
+export function ProductView({ product, related = [] }: ProductViewProps) {
   const add = useCart((s) => s.add);
 
   const [qty, setQty] = useState(1);

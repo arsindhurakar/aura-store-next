@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { CATEGORY_LABELS, formatPrice, STATUS_LABEL } from "@/lib/constants";
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 import { ProductFormDialog } from "@/features/products/components/product-form-dialog";
 import { useProducts } from "@/features/products/hooks/use-product-queries";
 import { useDeleteProduct } from "@/features/products/hooks/use-product-mutations";

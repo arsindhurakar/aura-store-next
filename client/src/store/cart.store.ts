@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { StaticImageData } from "next/image";
 
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 
 export interface CartLine {
   productId: string;

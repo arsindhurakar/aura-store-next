@@ -3,7 +3,7 @@ import {
   CreateProductDto,
   Product,
   UpdateProductDto,
-} from "@/features/products/product.types";
+} from "@/features/products/types/product.types";
 import { productApi } from "@/features/products/api/product.api";
 
 export const productService = {

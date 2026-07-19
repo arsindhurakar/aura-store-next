@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import heroPhone from "@/assets/images/jpg/hero-phone.jpg";
 import { useCategories } from "@/features/categories/hooks/useCategory";
 import { Category } from "@/features/categories/types";
-import { Product } from "@/features/products/product.types";
+import { Product } from "@/features/products/types/product.types";
 
 export default function PublicPage() {
   const { data: featured, isLoading } = useFeatured();

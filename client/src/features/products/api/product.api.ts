@@ -9,7 +9,7 @@ import {
   Product,
   ProductResponseDto,
   UpdateProductDto,
-} from "@/features/products/product.types";
+} from "@/features/products/types/product.types";
 import api from "@/services/axios";
 import { API_ENDPOINTS } from "@/constants/api.constants";
 

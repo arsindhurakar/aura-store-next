@@ -1,7 +1,7 @@
 import {
   CreateProductDto,
   UpdateProductDto,
-} from "@/features/products/product.types";
+} from "@/features/products/types/product.types";
 import { ProductFormInput } from "@/lib/validators";
 
 export function mapFormToCreateProductDto(
