@@ -5,7 +5,7 @@ import { ApiError } from "@/utils/api-error.js";
 import { Prisma } from "@prisma/client";
 import { getConflictFields } from "@/utils/prisma.js";
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   if (err instanceof ApiError) {
     const body: ApiErrorResponse = {
       success: false,
@@ -70,7 +70,7 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     }
   }
 
-  console.error(err);
+  req.log.error({ err }, "Unhandled exception");
 
   const body: ApiErrorResponse = {
     success: false,

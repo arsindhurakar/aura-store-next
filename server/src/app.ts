@@ -1,16 +1,25 @@
 import cors from "cors";
 import express from "express";
+import { pinoHttp } from "pino-http";
 
 import { errorHandler } from "@/middlewares/error-handler.js";
 import { notFoundHandler } from "@/middlewares/not-found.js";
-import productRouter from "./routes/product.route.js";
-import authRouter from "./routes/auth.route.js";
+import { logger } from "@/logger/index.js";
+import authRouter from "@/routes/auth.route.js";
+import productRouter from "@/routes/product.route.js";
 
 const app = express();
 
 if (process.env.NODE_ENV !== "production") {
   app.disable("etag");
 }
+
+app.use(
+  pinoHttp({
+    logger,
+    autoLogging: false,
+  }),
+);
 
 app.use(
   cors({
