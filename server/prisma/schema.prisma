@@ -19,6 +19,7 @@ model Product {
   stockStatus StockStatus     @default(in_stock)
   images      String[]
   featured    Boolean         @default(false)
+  orderItems  OrderItem[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -38,6 +39,47 @@ model User {
   updatedAt DateTime @updatedAt
 
   refreshSessions RefreshSession[]
+}
+
+model Customer {
+  id        String  @id @default(cuid())
+  firstName String
+  lastName  String
+  orders    Order[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderCounter {
+  year  Int @id
+  count Int @default(0)
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  referenceId String      @unique
+  customerId  String
+  items       OrderItem[]
+  status      OrderStatus @default(pending)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([status])
+  @@index([customerId])
 }
 
 model RefreshSession {
@@ -74,4 +116,12 @@ enum StockStatus {
 
 enum Role {
   admin
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
 }
