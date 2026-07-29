@@ -7,6 +7,7 @@ import { notFoundHandler } from "@/middlewares/not-found.js";
 import { logger } from "@/logger/index.js";
 import authRouter from "@/routes/auth.route.js";
 import productRouter from "@/routes/product.route.js";
+import orderRouter from "@/routes/order.route.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
