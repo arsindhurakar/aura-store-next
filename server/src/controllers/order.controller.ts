@@ -12,3 +12,13 @@ export const getOrders = asyncHandler(async (req: Request, res: Response) => {
 
   res.json(ok(data));
 });
+
+export const getOrderById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params as { id: string };
+
+    const data = await service.getById(id);
+
+    res.json(ok(data));
+  },
+);

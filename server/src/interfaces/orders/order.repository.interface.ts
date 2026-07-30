@@ -1,5 +1,6 @@
 import type { OrderWithItems } from "@/types/order.types.js";
 
 export interface IOrderRepository {
-  getMany(): Promise<OrderWithItems[]>;
+  findMany(): Promise<OrderWithItems[]>;
+  findOne(id: string): Promise<OrderWithItems | null>;
 }

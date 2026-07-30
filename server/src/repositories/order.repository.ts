@@ -1,13 +1,22 @@
 import prisma from "@/lib/prisma.js";
 import { IOrderRepository } from "@/interfaces/orders/order.repository.interface.js";
-import { Order } from "@prisma/client";
+import { OrderWithItems } from "@/types/order.types.js";
 
 export class OrderRepository implements IOrderRepository {
-  getMany() {
+  findMany() {
     return prisma.order.findMany({
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        items: true,
+      },
+    });
+  }
+
+  findOne(id: string): Promise<OrderWithItems | null> {
+    return prisma.order.findUnique({
+      where: { id },
       include: {
         items: true,
       },
