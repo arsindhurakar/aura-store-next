@@ -23,7 +23,10 @@ export class ProductService implements IProductService {
     const product = await this.repo.findById(id);
 
     if (!product) {
-      throw ApiError.notFound({ details: { id } });
+      throw ApiError.notFound({
+        details: { id },
+        message: "Product not found",
+      });
     }
 
     return toProductResponseDto(product);

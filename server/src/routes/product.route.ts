@@ -7,29 +7,36 @@ import {
   getProducts,
   updateProduct,
 } from "@/controllers/product.controller.js";
-import { validate } from "@/middlewares/validator.js";
+import { validateBody, validateParams } from "@/middlewares/validator.js";
 import {
   createProductSchema,
   updateProductSchema,
 } from "@/schemas/product.schema.js";
 import { authenticateToken } from "@/middlewares/auth/authenticate.js";
+import { paramIdSchema } from "@/schemas/index.js";
 
 const productRouter = Router();
 
 productRouter.get("/", getProducts);
-productRouter.get("/:id", getProductById);
+productRouter.get("/:id", validateParams(paramIdSchema), getProductById);
 productRouter.post(
   "/",
   authenticateToken,
-  validate(createProductSchema),
+  validateBody(createProductSchema),
   createProduct,
 );
 productRouter.patch(
   "/:id",
   authenticateToken,
-  validate(updateProductSchema),
+  validateParams(paramIdSchema),
+  validateBody(updateProductSchema),
   updateProduct,
 );
-productRouter.delete("/:id", authenticateToken, deleteProduct);
+productRouter.delete(
+  "/:id",
+  authenticateToken,
+  validateParams(paramIdSchema),
+  deleteProduct,
+);
 
 export default productRouter;

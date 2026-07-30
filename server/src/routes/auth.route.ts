@@ -6,7 +6,7 @@ import {
   refresh,
   register,
 } from "@/controllers/auth.controller.js";
-import { validate } from "@/middlewares/validator.js";
+import { validateBody } from "@/middlewares/validator.js";
 import {
   registerSchema,
   loginSchema,
@@ -15,9 +15,9 @@ import {
 
 const authRouter = Router();
 
-authRouter.post("/register", validate(registerSchema), register);
-authRouter.post("/login", validate(loginSchema), login);
-authRouter.post("/logout", validate(refreshSessionSchema), logout);
-authRouter.post("/refresh", validate(refreshSessionSchema), refresh);
+authRouter.post("/register", validateBody(registerSchema), register);
+authRouter.post("/login", validateBody(loginSchema), login);
+authRouter.post("/logout", validateBody(refreshSessionSchema), logout);
+authRouter.post("/refresh", validateBody(refreshSessionSchema), refresh);
 
 export default authRouter;

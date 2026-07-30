@@ -18,7 +18,10 @@ export class OrderService implements IOrderService {
     const order = await this.repo.findOne(id);
 
     if (!order) {
-      throw ApiError.notFound({ message: "Order not found" });
+      throw ApiError.notFound({
+        details: { id },
+        message: "Order not found",
+      });
     }
 
     return toOrderResponseDto(order);
