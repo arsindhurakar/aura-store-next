@@ -2,16 +2,18 @@ name: Client CI
 
 on:
   pull_request:
-    branches: [dev]
+    branches: [dev, main]
     # "paths" is the key monorepo trick: this workflow ONLY triggers if a
     # changed file's path starts with "client/".
     paths:
       - "client/**"
+      - ".github/workflows/client-ci.yml"
 
   push:
-    branches: [dev]
+    branches: [dev, main]
     paths:
       - "client/**"
+      - ".github/workflows/client-ci.yml"
 
 jobs:
   build-and-test:
@@ -70,7 +72,7 @@ jobs:
             ${{ runner.os }}-nextjs-client-${{ hashFiles('client/package-lock.json') }}-
 
       # Step 7: Build the client app. Catches broken imports, missing env
-      # vars, and any build-breaking bugs before they reach "dev" or get
+      # vars, and any build-breaking bugs before they reach "dev/main" or get
       # deployed.
       - name: Build
         run: npm run build
