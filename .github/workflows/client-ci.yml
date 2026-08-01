@@ -52,8 +52,11 @@ jobs:
 
       # Step 5: TypeScript check (client only). Catches type errors without
       # needing to run a full build - faster feedback, clearer error output.
+      # "next typegen" regenerates the gitignored "next-env.d.ts" (which
+      # declares .jpg/.svg/etc. import types) before tsc runs - without it a
+      # fresh checkout fails with TS2307 on image imports.
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run type-check
 
       # Step 6: Cache Next.js's build cache to speed up future CI runs.
       # Scoped to "client/.next/cache" since that's where client's Next.js
