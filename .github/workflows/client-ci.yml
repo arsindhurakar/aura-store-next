@@ -1,0 +1,73 @@
+name: Client CI
+
+on:
+  pull_request:
+    branches: [dev]
+    # "paths" is the key monorepo trick: this workflow ONLY triggers if a
+    # changed file's path starts with "client/".
+    paths:
+      - "client/**"
+
+  push:
+    branches: [dev]
+    paths:
+      - "client/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # "defaults.run.working-directory" tells every "run:" step below to
+    # execute as if you'd already "cd client" first. Without this, you'd
+    # have to prefix every single command with "cd client &&".
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      # Step 1: Pull the repo's code onto the VM.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js on the VM.
+      # "cache-dependency-path" points at client's own lock file specifically
+      # - important in a monorepo, since the root of the repo may not have
+      # a package-lock.json at all (client/ and server/ each have their own).
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      # Step 3: Install client's dependencies only.
+      # Because of "working-directory: client" above, this installs from
+      # client/package.json
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Run ESLint on the client code. Fails the job on lint errors.
+      - name: Lint
+        run: npm run lint
+
+      # Step 5: TypeScript check (client only). Catches type errors without
+      # needing to run a full build - faster feedback, clearer error output.
+      - name: Type check
+        run: npx tsc --noEmit
+
+      # Step 6: Cache Next.js's build cache to speed up future CI runs.
+      # Scoped to "client/.next/cache" since that's where client's Next.js
+      # build output lives in this monorepo layout.
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: client/.next/cache
+          key: ${{ runner.os }}-nextjs-client-${{ hashFiles('client/package-lock.json') }}-${{ hashFiles('client/**/*.js', 'client/**/*.jsx', 'client/**/*.ts', 'client/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-client-${{ hashFiles('client/package-lock.json') }}-
+
+      # Step 7: Build the client app. Catches broken imports, missing env
+      # vars, and any build-breaking bugs before they reach "dev" or get
+      # deployed.
+      - name: Build
+        run: npm run build
