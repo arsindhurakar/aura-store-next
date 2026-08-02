@@ -1,0 +1,67 @@
+name: Server CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+    # "paths" is the key monorepo trick: this workflow ONLY triggers if a
+    # changed file's path starts with "server/".
+    paths:
+      - "server/**"
+      - ".github/workflows/server-ci.yml"
+
+  push:
+    branches: [dev, main]
+    paths:
+      - "server/**"
+      - ".github/workflows/server-ci.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # "defaults.run.working-directory" tells every "run:" step below to
+    # execute as if you'd already "cd server" first. Without this, you'd
+    # have to prefix every single command with "cd server &&".
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      # Step 1: Pull the repo's code onto the VM.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js on the VM.
+      # "cache-dependency-path" points at server's own lock file specifically
+      # - important in a monorepo, since the root of the repo may not have
+      # a package-lock.json at all (client/ and server/ each have their own).
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      # Step 3: Install server's dependencies only.
+      # Because of "working-directory: server" above, this installs from
+      # server/package.json
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Generate the Prisma client.
+      # The generated client lives in gitignored node_modules/.prisma, so a
+      # fresh "npm ci" won't have it. Without "prisma generate", the typecheck
+      # and build below fail to resolve "@prisma/client".
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      # Step 5: TypeScript check (server only). Catches type errors without
+      # needing to run a full build - faster feedback, clearer error output.
+      - name: Type check
+        run: npm run typecheck
+
+      # Step 6: Build the server. Compiles TypeScript to "dist/" via
+      # "tsc --project tsconfig.build.json". Catches broken imports and any
+      # build-breaking bugs before they reach "dev/main" or get deployed.
+      - name: Build
+        run: npm run build
