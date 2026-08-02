@@ -52,8 +52,13 @@ jobs:
       # The generated client lives in gitignored node_modules/.prisma, so a
       # fresh "npm ci" won't have it. Without "prisma generate", the typecheck
       # and build below fail to resolve "@prisma/client".
+      # "DATABASE_URL" must be set because prisma.config.ts resolves
+      # env("DATABASE_URL") at config-load time - but generate never connects
+      # to the DB, so a placeholder is enough. Scoped to this step only.
       - name: Generate Prisma client
         run: npx prisma generate
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
 
       # Step 5: TypeScript check (server only). Catches type errors without
       # needing to run a full build - faster feedback, clearer error output.
