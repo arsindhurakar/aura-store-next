@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
             The store, in your hands.
           </h2>
           <p className="mt-4 max-w-sm text-muted-foreground">
-            Inventory, orders, settings — managed from one quiet, premium
+            Inventory, orders, settings - managed from one quiet, premium
             console.
           </p>
         </div>
