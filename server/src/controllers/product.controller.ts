@@ -29,6 +29,16 @@ export const getProductById = asyncHandler(
   },
 );
 
+export const getProductBySlug = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { slug } = req.params as { slug: string };
+
+    const data = await service.getBySlug(slug);
+
+    res.json(ok(data));
+  },
+);
+
 export const createProduct = asyncHandler(
   async (req: Request, res: Response) => {
     const data = await service.create(req.body as CreateProductInput);

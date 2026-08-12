@@ -7,6 +7,7 @@ import type { ProductResponseDto } from "@/dtos/product.dto.js";
 export interface IProductService {
   getAll(): Promise<ProductResponseDto[]>;
   getById(id: string): Promise<ProductResponseDto>;
+  getBySlug(slug: string): Promise<ProductResponseDto>;
   create(data: CreateProductInput): Promise<ProductResponseDto>;
   updateById({
     id,
