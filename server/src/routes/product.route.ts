@@ -4,6 +4,7 @@ import {
   createProduct,
   deleteProduct,
   getProductById,
+  getProductBySlug,
   getProducts,
   updateProduct,
 } from "@/controllers/product.controller.js";
@@ -13,12 +14,17 @@ import {
   updateProductSchema,
 } from "@/schemas/product.schema.js";
 import { authenticateToken } from "@/middlewares/auth/authenticate.js";
-import { paramIdSchema } from "@/schemas/index.js";
+import { paramIdSchema, productSlugParamsSchema } from "@/schemas/index.js";
 
 const productRouter = Router();
 
 productRouter.get("/", getProducts);
 productRouter.get("/:id", validateParams(paramIdSchema), getProductById);
+productRouter.get(
+  "/slug/:slug",
+  validateParams(productSlugParamsSchema),
+  getProductBySlug,
+);
 productRouter.post(
   "/",
   authenticateToken,

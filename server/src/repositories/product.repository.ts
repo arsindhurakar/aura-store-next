@@ -19,6 +19,10 @@ export class ProductRepository implements IProductRepository {
     return prisma.product.findUnique({ where: { id } });
   }
 
+  findBySlug(slug: string): Promise<Product | null> {
+    return prisma.product.findUnique({ where: { slug } });
+  }
+
   create(data: CreateProductInput & { slug: string }): Promise<Product> {
     return prisma.product.create({ data });
   }
