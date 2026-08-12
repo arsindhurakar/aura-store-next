@@ -32,6 +32,19 @@ export class ProductService implements IProductService {
     return toProductResponseDto(product);
   }
 
+  async getBySlug(slug: string): Promise<ProductResponseDto> {
+    const product = await this.repo.findBySlug(slug);
+
+    if (!product) {
+      throw ApiError.notFound({
+        details: { slug },
+        message: "Product not found",
+      });
+    }
+
+    return toProductResponseDto(product);
+  }
+
   async create(data: CreateProductInput): Promise<ProductResponseDto> {
     const product = await this.repo.create({
       ...data,
