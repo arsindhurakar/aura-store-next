@@ -13,7 +13,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const message =
-      error.response?.data?.error?.message || "Something went wrong";
+      error.response?.data?.error?.message ??
+      error.response?.data?.message ??
+      error.message ??
+      "Something went wrong";
 
     return Promise.reject(new Error(message));
   },
@@ -21,15 +24,17 @@ api.interceptors.response.use(
 
 api.interceptors.request.use(
   (config) => {
-    const accessToken = tokenStorage.getAccessToken();
+    if (typeof window !== "undefined") {
+      const accessToken = tokenStorage.getAccessToken();
 
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
 
     return config;
   },
-  (error) => Promise.reject(new Error(error)),
+  (error) => Promise.reject(error),
 );
 
 export default api;
