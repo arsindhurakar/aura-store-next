@@ -27,9 +27,11 @@ export const productApi = {
   },
 
   async getBySlug(slug: string) {
-    await wait();
+    const response = await api.get<ApiResponse<ProductResponseDto>>(
+      `${API_ENDPOINTS.PRODUCTS}/slug/${slug}`,
+    );
 
-    return products.find((p) => p.slug === slug) ?? null;
+    return adaptProduct(response.data.data);
   },
 
   async featured() {
