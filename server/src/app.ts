@@ -1,10 +1,12 @@
 import cors from "cors";
 import express from "express";
+import { apiReference } from "@scalar/express-api-reference";
 import { pinoHttp } from "pino-http";
 
 import { errorHandler } from "@/middlewares/error-handler.js";
 import { notFoundHandler } from "@/middlewares/not-found.js";
 import { logger } from "@/logger/index.js";
+import { openApiSpec } from "@/docs/openapi.js";
 import authRouter from "@/routes/auth.route.js";
 import productRouter from "@/routes/product.route.js";
 import orderRouter from "@/routes/order.route.js";
@@ -30,6 +32,15 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use(
+  "/api-reference",
+  apiReference({
+    spec: {
+      content: openApiSpec,
+    },
+  }),
+);
 
 app.get("/", (_req, res) => {
   res.json({ success: true, data: { message: "API is running!" } });
