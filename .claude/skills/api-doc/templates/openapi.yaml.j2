@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: {{ info.title | default("Aura Store API") }}
+  version: {{ info.version | default("1.0.0") }}
+  description: {{ info.description | default("Aura Store REST API") }}
+servers:
+  - url: {{ server.url | default("http://localhost:3001/api") }}
+    description: {{ server.description | default("Development server") }}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+{% for name, schema in components.schemas.items() %}
+    {{ name }}:
+{{ schema | indent(6) }}
+{% endfor %}
+  parameters:
+    page:
+      name: page
+      in: query
+      description: Page number
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    limit:
+      name: limit
+      in: query
+      description: Items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+paths:
+{% for path, methods in paths.items() %}
+  {{ path }}:
+{% for method, spec in methods.items() %}
+    {{ method.lower() }}:
+{{ spec | indent(6) }}
+{% endfor %}
+{% endfor %}

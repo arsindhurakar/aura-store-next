@@ -1,0 +1,45 @@
+import { test, expect } from '@playwright/test'
+
+test.describe('{{flowName}}', () => {
+  test.beforeEach(async ({ page }) => {
+    // Setup: login or seed data if needed
+    {% if auth %}
+    await page.goto('/login')
+    await page.fill('[data-testid="email"]', '{{testUser.email}}')
+    await page.fill('[data-testid="password"]', '{{testUser.password}}')
+    await page.click('[data-testid="submit"]')
+    await expect(page).toHaveURL('{{afterLoginUrl}}')
+    {% endif %}
+  })
+
+  test('completes {{flowName}} successfully', async ({ page }) => {
+    // Step 1: Navigate to start
+    await page.goto('{{startUrl}}')
+
+    // Step 2: {{step2Description}}
+    {% for step in steps %}
+    await page.{{step.action}}('{{step.selector}}'{% if step.value %}, '{{step.value}}'{% endif %})
+    {% if step.expect %}
+    await expect(page.{{step.expect.target}}('{{step.expect.selector}}')).{{step.expect.matcher}}{{step.expect.value ? "('" + step.expect.value + "')" : ""}}
+    {% endif %}
+    {% endfor %}
+
+    // Final assertion
+    await expect(page).toHaveURL('{{finalUrl}}')
+  })
+
+  test('shows error when {{errorScenario}}', async ({ page }) => {
+    await page.goto('{{errorUrl}}')
+    {% if errorAction %}
+    await page.{{errorAction.action}}('{{errorAction.selector}}'{% if errorAction.value %}, '{{errorAction.value}}'{% endif %})
+    {% endif %}
+
+    await expect(page.getByText('{{errorMessage}}')).toBeVisible()
+  })
+
+  test('is accessible (keyboard navigation)', async ({ page }) => {
+    await page.goto('{{startUrl}}')
+    await page.keyboard.press('Tab')
+    await expect(page).toHaveFocusedElement()
+  })
+})

@@ -1,0 +1,57 @@
+'use client'
+
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '{{testUtilsPath}}/test-utils'
+import { {{componentName}} } from '{{componentImport}}'
+import { createQueryWrapper } from '{{testUtilsPath}}/query-wrapper'
+
+describe('{{componentName}}', () => {
+  const renderComponent = (props = {}) => {
+    return render(<{{componentName}} {...props} />, { wrapper: createQueryWrapper() })
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders without crashing', () => {
+    renderComponent()
+    expect(screen.getByRole('{{role}}')).toBeInTheDocument()
+  })
+
+  it('displays {{expectedContent}}', () => {
+    renderComponent({{defaultProps}})
+    expect(screen.getByText('{{expectedText}}')).toBeInTheDocument()
+  })
+
+  it('handles {{interaction}} correctly', async () => {
+    const handleClick = vi.fn()
+    renderComponent({ onClick: handleClick })
+
+    fireEvent.click(screen.getByRole('button', { name: '{{buttonLabel}}' }))
+    await waitFor(() => expect(handleClick).toHaveBeenCalledTimes(1))
+  })
+
+  {% if hasForms %}
+  it('validates form with Zod schema', async () => {
+    renderComponent()
+
+    const input = screen.getByLabelText('{{fieldLabel}}')
+    fireEvent.change(input, { target: { value: '{{invalidValue}}' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Submit' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('{{errorMessage}}')).toBeInTheDocument()
+    })
+  })
+  {% endif %}
+
+  {% if hasQuery %}
+  it('fetches data with TanStack Query', async () => {
+    const { result } = renderHook(() => use{{queryName}}(), { wrapper: createQueryWrapper() })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toEqual({{mockData}})
+  })
+  {% endif %}
+})
