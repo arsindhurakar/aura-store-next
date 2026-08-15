@@ -1,0 +1,58 @@
+import { vi } from 'vitest'
+import { PrismaClient } from '@prisma/client'
+
+type PrismaMock = {
+  [Model in keyof PrismaClient]: PrismaClient[Model] extends { findUnique: (...args: any[]) => any }
+    ? {
+        findUnique: ReturnType<typeof vi.fn>
+        findMany: ReturnType<typeof vi.fn>
+        findFirst: ReturnType<typeof vi.fn>
+        create: ReturnType<typeof vi.fn>
+        update: ReturnType<typeof vi.fn>
+        delete: ReturnType<typeof vi.fn>
+        upsert: ReturnType<typeof vi.fn>
+        count: ReturnType<typeof vi.fn>
+      }
+    : never
+}
+
+export function createPrismaMock(): PrismaMock {
+  const mock = {} as PrismaMock
+
+  // Auto-mock all Prisma models
+  const modelNames = [
+    'user',
+    'product',
+    'category',
+    'order',
+    'orderItem',
+    'cart',
+    'cartItem',
+    'address',
+    'review',
+    'session',
+  ]
+
+  for (const model of modelNames) {
+    mock[model] = {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      upsert: vi.fn(),
+      count: vi.fn(),
+    }
+  }
+
+  // Add transaction support
+  mock.$transaction = vi.fn(async (fn) => fn(mock))
+
+  // Add disconnect
+  mock.$disconnect = vi.fn()
+
+  return mock
+}
+
+export type { PrismaMock }

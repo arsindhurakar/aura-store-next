@@ -1,0 +1,42 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import {{ {{targetName}} }} from '{{targetImport}}'
+import { createPrismaMock, type PrismaMock } from '{{testUtilsPath}}/prisma-mock'
+
+describe('{{targetName}}', () => {
+  let prisma: PrismaMock
+  let sut: {{targetName}} // system under test
+
+  beforeEach(() => {
+    prisma = createPrismaMock()
+    sut = new {{targetName}}(prisma)
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('{{methodName}}', () => {
+    it('should {{expectedBehavior}}', async () => {
+      // Arrange
+      const input = {{inputExample}}
+      const expected = {{expectedExample}}
+      prisma.{{model}}.{{method}}.mockResolvedValue(expected)
+
+      // Act
+      const result = await sut.{{methodName}}(input)
+
+      // Assert
+      expect(result).toEqual(expected)
+      expect(prisma.{{model}}.{{method}}).toHaveBeenCalledWith({{expectedCallArgs}})
+    })
+
+    it('should throw when {{errorCondition}}', async () => {
+      // Arrange
+      const input = {{inputExample}}
+      prisma.{{model}}.{{method}}.mockRejectedValue(new Error('{{errorMessage}}'))
+
+      // Act & Assert
+      await expect(sut.{{methodName}}(input)).rejects.toThrow('{{errorMessage}}')
+    })
+  })
+})

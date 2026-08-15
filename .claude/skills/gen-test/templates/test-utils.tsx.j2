@@ -1,0 +1,54 @@
+'use client'
+
+import { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { SessionProvider } from 'next-auth/react'
+import { render, RenderOptions } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+
+// Query Client Wrapper
+export function createQueryWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+      mutations: { retry: false },
+    },
+  })
+
+  return function QueryWrapper({ children }: { children: ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>{children}</SessionProvider>
+      </QueryClientProvider>
+    )
+  }
+}
+
+// Extended render with providers
+export function renderWithProviders(
+  ui: ReactNode,
+  options?: Omit<RenderOptions, 'wrapper'>
+) {
+  return render(ui, {
+    wrapper: createQueryWrapper(),
+    ...options,
+  })
+}
+
+// User event setup
+export const setupUser = () => userEvent.setup()
+
+// Mock next-auth session
+export const mockSession = (user = { email: 'test@example.com', name: 'Test User' }) => {
+  vi.mock('next-auth/react', async () => {
+    const actual = await vi.importActual('next-auth/react')
+    return {
+      ...actual,
+      useSession: () => ({ data: { user }, status: 'authenticated' }),
+    }
+  })
+}
+
+// Re-export testing library utilities
+export * from '@testing-library/react'
+export { userEvent } from '@testing-library/user-event'

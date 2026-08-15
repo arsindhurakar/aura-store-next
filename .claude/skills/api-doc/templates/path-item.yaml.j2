@@ -1,0 +1,40 @@
+summary: {{ spec.summary | default("") }}
+      description: {{ spec.description | default("") }}
+      operationId: {{ spec.operationId | default("") }}
+      {% if spec.security %}
+      security:
+{% for sec in spec.security %}
+        - {{ sec | tojson }}
+{% endfor %}
+      {% endif %}
+      {% if spec.parameters %}
+      parameters:
+{% for param in spec.parameters %}
+        - {{ param | tojson }}
+{% endfor %}
+      {% endif %}
+      {% if spec.requestBody %}
+      requestBody:
+        {% if spec.requestBody.required %}
+        required: true
+        {% endif %}
+        content:
+{% for contentType, schema in spec.requestBody.content.items() %}
+          {{ contentType }}:
+            schema:
+{{ schema | indent(14) }}
+{% endfor %}
+      {% endif %}
+      responses:
+{% for statusCode, response in spec.responses.items() %}
+        '{{ statusCode }}':
+          description: {{ response.description | default("") }}
+          {% if response.content %}
+          content:
+{% for contentType, schema in response.content.items() %}
+            {{ contentType }}:
+              schema:
+{{ schema | indent(14) }}
+{% endfor %}
+          {% endif %}
+{% endfor %}
