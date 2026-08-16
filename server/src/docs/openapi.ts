@@ -6,14 +6,18 @@ export const openApiSpec: OpenAPIV3_1.Document = {
     title: "Aura Store API",
     version: "1.0.0",
     description:
-      "Product catalog API for Aura Store. Covers product listing, lookup, " +
-      "and admin management (create/update/delete).",
+      "Product catalog and authentication API for Aura Store. Covers product " +
+      "listing, lookup, admin management (create/update/delete), and the " +
+      "auth service (register, login, token refresh, logout).",
   },
   servers: [
     { url: "http://localhost:4000", description: "Local development" },
     { url: "https://api.aurastore.com", description: "Production" },
   ],
-  tags: [{ name: "Products", description: "Product catalog operations" }],
+  tags: [
+    { name: "Products", description: "Product catalog operations" },
+    { name: "Auth", description: "Authentication and session management" },
+  ],
   components: {
     securitySchemes: {
       bearerAuth: {
@@ -169,6 +173,131 @@ export const openApiSpec: OpenAPIV3_1.Document = {
             },
           },
         },
+      },
+      UserRole: {
+        type: "string",
+        enum: ["admin"],
+        description: "Role assigned to the user.",
+      },
+      UserResponse: {
+        type: "object",
+        required: [
+          "id",
+          "firstName",
+          "lastName",
+          "email",
+          "role",
+          "createdAt",
+          "updatedAt",
+        ],
+        properties: {
+          id: { type: "string", examples: ["clp1a2b3c4d5e6f"] },
+          firstName: { type: "string", examples: ["Ada"] },
+          lastName: { type: "string", examples: ["Lovelace"] },
+          email: { type: "string", format: "email", examples: ["ada@example.com"] },
+          role: { $ref: "#/components/schemas/UserRole" },
+          createdAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+        },
+      },
+      AuthTokens: {
+        type: "object",
+        required: ["accessToken", "refreshToken"],
+        properties: {
+          accessToken: {
+            type: "string",
+            description: "Short-lived JWT used to authorize requests.",
+            examples: ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+          },
+          refreshToken: {
+            type: "string",
+            description:
+              "Long-lived token used to obtain new access tokens. Rotate on use.",
+            examples: ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+          },
+        },
+      },
+      AuthResponse: {
+        type: "object",
+        required: ["user", "tokens"],
+        properties: {
+          user: { $ref: "#/components/schemas/UserResponse" },
+          tokens: { $ref: "#/components/schemas/AuthTokens" },
+        },
+      },
+      RegisterRequest: {
+        type: "object",
+        required: ["firstName", "lastName", "email", "password"],
+        properties: {
+          firstName: {
+            type: "string",
+            minLength: 2,
+            examples: ["Ada"],
+          },
+          lastName: {
+            type: "string",
+            minLength: 2,
+            examples: ["Lovelace"],
+          },
+          email: {
+            type: "string",
+            format: "email",
+            examples: ["ada@example.com"],
+          },
+          password: {
+            type: "string",
+            minLength: 8,
+            examples: ["sup3rsecret"],
+          },
+          role: {
+            type: "string",
+            enum: ["admin"],
+            default: "admin",
+            description: "Role for the new account. Defaults to admin.",
+          },
+        },
+        examples: [
+          {
+            firstName: "Ada",
+            lastName: "Lovelace",
+            email: "ada@example.com",
+            password: "sup3rsecret",
+          },
+        ],
+      },
+      LoginRequest: {
+        type: "object",
+        required: ["email", "password"],
+        properties: {
+          email: {
+            type: "string",
+            format: "email",
+            examples: ["ada@example.com"],
+          },
+          password: { type: "string", examples: ["sup3rsecret"] },
+        },
+        examples: [
+          {
+            email: "ada@example.com",
+            password: "sup3rsecret",
+          },
+        ],
+      },
+      RefreshRequest: {
+        type: "object",
+        required: ["refreshToken"],
+        properties: {
+          refreshToken: {
+            type: "string",
+            description: "A valid (non-revoked, unexpired) refresh token.",
+            examples: ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+          },
+        },
+        examples: [{ refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }],
+      },
+      NullData: {
+        type: "null",
+        description: "No data returned (successful operation with empty response body).",
       },
     },
     responses: {
@@ -515,6 +644,210 @@ export const openApiSpec: OpenAPIV3_1.Document = {
             },
           },
           "404": { $ref: "#/components/responses/NotFound" },
+          "500": { $ref: "#/components/responses/InternalError" },
+        },
+      },
+    },
+    "/api/auth/register": {
+      post: {
+        tags: ["Auth"],
+        summary: "Register a new user",
+        operationId: "register",
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/RegisterRequest" },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "The newly created user.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["success", "data"],
+                  properties: {
+                    success: { type: "boolean", enum: [true] },
+                    data: {
+                      $ref: "#/components/schemas/UserResponse",
+                    },
+                  },
+                },
+                examples: {
+                  registered: {
+                    value: {
+                      success: true,
+                      data: {
+                        id: "clp1a2b3c4d5e6f",
+                        firstName: "Ada",
+                        lastName: "Lovelace",
+                        email: "ada@example.com",
+                        role: "admin",
+                        createdAt: "2026-08-16T10:00:00.000Z",
+                        updatedAt: "2026-08-16T10:00:00.000Z",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "409": { $ref: "#/components/responses/Conflict" },
+          "500": { $ref: "#/components/responses/InternalError" },
+        },
+      },
+    },
+    "/api/auth/login": {
+      post: {
+        tags: ["Auth"],
+        summary: "Log in and obtain tokens",
+        operationId: "login",
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/LoginRequest" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "The authenticated user and issued tokens.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["success", "data"],
+                  properties: {
+                    success: { type: "boolean", enum: [true] },
+                    data: {
+                      $ref: "#/components/schemas/AuthResponse",
+                    },
+                  },
+                },
+                examples: {
+                  loggedIn: {
+                    value: {
+                      success: true,
+                      data: {
+                        user: {
+                          id: "clp1a2b3c4d5e6f",
+                          firstName: "Ada",
+                          lastName: "Lovelace",
+                          email: "ada@example.com",
+                          role: "admin",
+                          createdAt: "2026-08-16T10:00:00.000Z",
+                          updatedAt: "2026-08-16T10:00:00.000Z",
+                        },
+                        tokens: {
+                          accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                          refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "500": { $ref: "#/components/responses/InternalError" },
+        },
+      },
+    },
+    "/api/auth/logout": {
+      post: {
+        tags: ["Auth"],
+        summary: "Revoke a refresh session",
+        operationId: "logout",
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/RefreshRequest" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "The refresh session was revoked.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["success", "data"],
+                  properties: {
+                    success: { type: "boolean", enum: [true] },
+                    data: { $ref: "#/components/schemas/NullData" },
+                  },
+                },
+                examples: {
+                  loggedOut: {
+                    value: { success: true, data: null },
+                  },
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
+          "500": { $ref: "#/components/responses/InternalError" },
+        },
+      },
+    },
+    "/api/auth/refresh": {
+      post: {
+        tags: ["Auth"],
+        summary: "Refresh an access token",
+        operationId: "refresh",
+        security: [],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: { $ref: "#/components/schemas/RefreshRequest" },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "A new access token and rotated refresh token.",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  required: ["success", "data"],
+                  properties: {
+                    success: { type: "boolean", enum: [true] },
+                    data: {
+                      $ref: "#/components/schemas/AuthTokens",
+                    },
+                  },
+                },
+                examples: {
+                  refreshed: {
+                    value: {
+                      success: true,
+                      data: {
+                        accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "400": { $ref: "#/components/responses/ValidationError" },
+          "401": { $ref: "#/components/responses/Unauthorized" },
           "500": { $ref: "#/components/responses/InternalError" },
         },
       },
