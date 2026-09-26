@@ -3,7 +3,7 @@ import axios from "axios";
 import { tokenStorage } from "@/features/auth/utils/auth.utils";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: process.env.BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
