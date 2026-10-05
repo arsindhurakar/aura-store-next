@@ -1,16 +1,9 @@
-"use client";
-
-import { AdminShell } from "@/features/admin/components/AdminShell";
-import { usePathname } from "next/navigation";
+import { AdminLayoutWrapper } from "@/components/layout/AdminLayoutWrapper";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
-  if (pathname === "/admin" || pathname === "/admin/") return children;
-
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminLayoutWrapper>{children}</AdminLayoutWrapper>;
 }
