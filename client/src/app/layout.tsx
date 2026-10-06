@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Instrument_Serif } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/QueryProvider";
@@ -11,14 +11,13 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const interMono = Inter({
   subsets: ["latin"],
   variable: "--font-mono",
 });
 
-const instrumentSerif = Instrument_Serif({
+const loraDisplay = Lora({
   subsets: ["latin"],
-  weight: "400",
   variable: "--font-display",
 });
 
@@ -33,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable}`}
+      className={`${inter.variable} ${interMono.variable} ${loraDisplay.variable}`}
     >
       <body>
         {" "}
