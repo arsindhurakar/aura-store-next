@@ -9,7 +9,7 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
           <div className="mt-5 flex items-start justify-between gap-4">
             <div className="flex-1 space-y-2">
               {/* Brand */}
-              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-3 w-30" />
 
               {/* Name */}
               <Skeleton className="h-5 w-3/4" />
@@ -20,7 +20,7 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
           </div>
 
           {/* Status */}
-          <Skeleton className="mt-4 h-3 w-20" />
+          <Skeleton className="mt-2 h-3 w-20" />
         </div>
       ))}
     </div>

@@ -32,6 +32,10 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
 
+  // if (true) {
+  //   await new Promise(() => {});
+  // }
+
   const product = await productService.getProductBySlug(slug);
 
   if (!product) {

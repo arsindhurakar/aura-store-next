@@ -6,8 +6,8 @@ import { ArrowRight, ShieldCheck, Truck, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/layout/Container";
 import { ProductCard } from "@/features/products/components/product-card";
+import { ProductGridSkeleton } from "@/features/products/components/product-grid-skeleton";
 import { useFeatured } from "@/features/products/hooks/use-product-queries";
-import { Skeleton } from "@/components/ui/skeleton";
 import heroPhone from "@/assets/images/jpg/hero-phone.jpg";
 import { useCategories } from "@/features/categories/hooks/useCategory";
 import { Category } from "@/features/categories/types";
@@ -159,19 +159,15 @@ export default function PublicPage() {
             Shop all →
           </Link>
         </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-          {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => (
-                <div key={i}>
-                  <Skeleton className="aspect-square w-full rounded-2xl" />
-                  <Skeleton className="mt-5 h-4 w-1/2" />
-                </div>
-              ))
-            : (featured ?? []).map((p: Product, i: number) => (
-                <ProductCard key={p.id} product={p} priority={i < 3} />
-              ))}
-        </div>
+        {isLoading ? (
+          <ProductGridSkeleton />
+        ) : (
+          <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {(featured ?? []).map((p: Product, i: number) => (
+              <ProductCard key={p.id} product={p} priority={i < 3} />
+            ))}
+          </div>
+        )}
       </Container>
 
       {/* PROMO */}
